@@ -45,6 +45,7 @@ export const Header = () => {
   ];
 
   const secondaryNavLinks = [
+    { path: '/blog', label: 'وبلاگ' },
     { path: '/about', label: 'درباره ما' },
     { path: '/contact', label: 'تماس' },
   ];
@@ -80,8 +81,9 @@ export const Header = () => {
                 <Link
                   key={link.path}
                   to={link.path}
+                  aria-current={isActive(link.path) ? 'page' : undefined}
                   className={cn(
-                    "relative px-5 py-2.5 rounded-xl font-medium transition-all duration-300",
+                    "relative px-5 py-2.5 rounded-xl font-medium transition-all duration-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/60 focus-visible:ring-offset-2 focus-visible:ring-offset-background",
                     isActive(link.path)
                       ? "text-primary"
                       : "text-foreground/70 hover:text-foreground"
@@ -137,8 +139,9 @@ export const Header = () => {
                 <Link
                   key={link.path}
                   to={link.path}
+                  aria-current={isActive(link.path) ? 'page' : undefined}
                   className={cn(
-                    "relative px-5 py-2.5 rounded-xl font-medium transition-all duration-300",
+                    "relative px-5 py-2.5 rounded-xl font-medium transition-all duration-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/60 focus-visible:ring-offset-2 focus-visible:ring-offset-background",
                     isActive(link.path)
                       ? "text-primary"
                       : "text-foreground/70 hover:text-foreground"
@@ -212,8 +215,9 @@ export const Header = () => {
                   <Link
                     key={link.path}
                     to={link.path}
+                    aria-current={isActive(link.path) ? 'page' : undefined}
                     className={cn(
-                      "px-4 py-3 rounded-xl font-medium transition-all duration-300",
+                      "px-4 py-3 rounded-xl font-medium transition-all duration-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/60",
                       isActive(link.path)
                         ? "text-primary bg-primary/10"
                         : "text-foreground/70 hover:text-foreground hover:bg-muted/30"
@@ -251,8 +255,9 @@ export const Header = () => {
                   <Link
                     key={link.path}
                     to={link.path}
+                    aria-current={isActive(link.path) ? 'page' : undefined}
                     className={cn(
-                      "px-4 py-3 rounded-xl font-medium transition-all duration-300",
+                      "px-4 py-3 rounded-xl font-medium transition-all duration-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/60",
                       isActive(link.path)
                         ? "text-primary bg-primary/10"
                         : "text-foreground/70 hover:text-foreground hover:bg-muted/30"
