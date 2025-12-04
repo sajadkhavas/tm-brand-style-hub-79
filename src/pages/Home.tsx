@@ -6,11 +6,11 @@ import { Badge } from '@/components/ui/badge';
 import { ProductCard } from '@/components/product/ProductCard';
 import { Hero3DText } from '@/components/home/Hero3DText';
 import { ScrollReveal } from '@/components/animations/ScrollReveal';
-import { ParallaxSection, ParallaxBackground } from '@/components/animations/ParallaxSection';
 import { ScrollProgress } from '@/components/animations/ScrollProgress';
+import { BlogSection } from '@/components/home/BlogSection';
 import { products, categories } from '@/data/products';
 import { CheckCircle2, Truck, RotateCcw, ArrowLeft, Sparkles, Star, Zap, Heart, TrendingUp, Shield } from 'lucide-react';
-import { useState, useEffect, useRef } from 'react';
+import { useState, useRef } from 'react';
 import { useToast } from '@/hooks/use-toast';
 import { FloatingContactButton } from '@/components/layout/FloatingContactButton';
 
@@ -159,11 +159,11 @@ const Home = () => {
         <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-primary/30 to-transparent" />
         <div className="absolute bottom-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-primary/30 to-transparent" />
         
-        {/* Parallax background elements */}
-        <ParallaxSection speed={0.1} className="absolute top-0 left-0 w-full h-full pointer-events-none">
+        {/* Static background elements */}
+        <div className="absolute top-0 left-0 w-full h-full pointer-events-none">
           <div className="absolute top-1/4 -right-20 w-80 h-80 bg-primary/5 rounded-full blur-[100px]" />
           <div className="absolute bottom-1/4 -left-20 w-60 h-60 bg-accent/5 rounded-full blur-[80px]" />
-        </ParallaxSection>
+        </div>
         
         <div className="container mx-auto px-4 relative z-10">
           <ScrollReveal animation="fade-up" className="text-center mb-16">
@@ -216,9 +216,7 @@ const Home = () => {
 
       {/* Statistics Section with Counter Animation */}
       <section className="py-20 relative overflow-hidden">
-        <ParallaxSection speed={0.2} className="absolute inset-0 pointer-events-none">
-          <div className="absolute inset-0 bg-gradient-radial opacity-20" />
-        </ParallaxSection>
+        <div className="absolute inset-0 bg-gradient-radial opacity-20 pointer-events-none" />
         
         <div className="container mx-auto px-4 relative z-10">
           <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
@@ -242,11 +240,9 @@ const Home = () => {
         </div>
       </section>
 
-      {/* New Arrivals with Parallax */}
+      {/* New Arrivals */}
       <section className="py-24 md:py-32 relative">
-        <ParallaxSection speed={0.15} direction="down" className="absolute top-0 -left-64 pointer-events-none">
-          <div className="w-[500px] h-[500px] bg-primary/10 rounded-full blur-[150px]" />
-        </ParallaxSection>
+        <div className="absolute top-0 -left-64 w-[500px] h-[500px] bg-primary/10 rounded-full blur-[150px] pointer-events-none" />
         
         <div className="container mx-auto px-4 relative z-10">
           <ScrollReveal animation="fade-right">
@@ -289,9 +285,7 @@ const Home = () => {
         <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-border to-transparent" />
         <div className="absolute bottom-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-border to-transparent" />
         
-        <ParallaxSection speed={0.2} className="absolute top-0 right-0 pointer-events-none">
-          <div className="w-[500px] h-[500px] bg-primary/10 rounded-full blur-[150px]" />
-        </ParallaxSection>
+        <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-primary/10 rounded-full blur-[150px] pointer-events-none" />
         
         <div className="container mx-auto px-4 relative z-10">
           <ScrollReveal animation="fade-left">
@@ -328,11 +322,9 @@ const Home = () => {
         </div>
       </section>
 
-      {/* Brand Story with Parallax Background */}
+      {/* Brand Story */}
       <section className="py-24 md:py-32 relative">
-        <ParallaxSection speed={0.1} className="absolute inset-0 pointer-events-none">
-          <div className="absolute inset-0 bg-gradient-radial opacity-30" />
-        </ParallaxSection>
+        <div className="absolute inset-0 bg-gradient-radial opacity-30 pointer-events-none" />
         
         <div className="container mx-auto px-4 relative z-10">
           <div className="max-w-4xl mx-auto text-center" dir="rtl">
@@ -388,6 +380,9 @@ const Home = () => {
           </div>
         </div>
       </section>
+
+      {/* بخش وبلاگ TM-BRAND */}
+      <BlogSection />
 
       {/* Women's Collection Coming Soon */}
       <section className="py-24 md:py-32 relative overflow-hidden">

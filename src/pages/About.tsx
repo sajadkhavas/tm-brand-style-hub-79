@@ -2,7 +2,7 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Link } from 'react-router-dom';
 import { CheckCircle2, Target, Users, Zap, Award, Heart, Sparkles, ArrowLeft } from 'lucide-react';
-import aboutHero from '@/assets/about-hero.png';
+import aboutStore from '@/assets/about-store.jpg';
 
 const About = () => {
   const values = [
@@ -77,14 +77,14 @@ const About = () => {
         <div className="container mx-auto px-4">
           <div className="relative rounded-3xl overflow-hidden">
             <img 
-              src={aboutHero} 
-              alt="تیم TM-BRAND در استودیو طراحی"
+              src={aboutStore} 
+              alt="نمای فروشگاه TM-BRAND در پاساژ"
               className="w-full h-64 md:h-96 object-cover"
             />
             <div className="absolute inset-0 bg-gradient-to-t from-background/80 to-transparent" />
             <div className="absolute bottom-6 right-6 left-6 text-right" dir="rtl">
-              <h3 className="text-2xl md:text-3xl font-bold text-foreground mb-2">تیم TM-BRAND</h3>
-              <p className="text-muted-foreground">طراحی با عشق، تولید با کیفیت</p>
+              <h3 className="text-2xl md:text-3xl font-bold text-foreground mb-2">فروشگاه TM-BRAND</h3>
+              <p className="text-muted-foreground">استایل استریت‌ویر پرمیوم</p>
             </div>
           </div>
         </div>
