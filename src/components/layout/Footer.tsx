@@ -101,14 +101,14 @@ export const Footer = () => {
             <ul className="space-y-4">
               {[
                 { path: '/shop', label: 'فروشگاه' },
+                { path: '/blog', label: 'وبلاگ' },
                 { path: '/contact', label: 'تماس با ما' },
                 { path: '/about', label: 'درباره TM-BRAND' },
                 { path: '#', label: 'سوالات متداول' },
                 { path: '#', label: 'راهنمای سایز' },
-                { path: '#', label: 'شرایط و ضوابط' },
               ].map((link, index) => (
                 <li key={index}>
-                  <Link to={link.path} className="text-muted-foreground hover:text-primary transition-colors duration-300 flex items-center gap-2 group">
+                  <Link to={link.path} className="text-muted-foreground hover:text-primary transition-colors duration-300 flex items-center gap-2 group focus-visible:outline-none focus-visible:text-primary">
                     <span className="w-1.5 h-1.5 bg-primary/50 rounded-full opacity-0 group-hover:opacity-100 transition-opacity" />
                     {link.label}
                   </Link>
