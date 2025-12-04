@@ -80,10 +80,11 @@ const About = () => {
               src={aboutStore} 
               alt="نمای فروشگاه TM-BRAND در پاساژ"
               className="w-full h-64 md:h-96 object-cover"
+              loading="lazy"
             />
             <div className="absolute inset-0 bg-gradient-to-t from-background/80 to-transparent" />
             <div className="absolute bottom-6 right-6 left-6 text-right" dir="rtl">
-              <h3 className="text-2xl md:text-3xl font-bold text-foreground mb-2">فروشگاه TM-BRAND</h3>
+              <h2 className="text-2xl md:text-3xl font-bold text-foreground mb-2">فروشگاه TM-BRAND</h2>
               <p className="text-muted-foreground">استایل استریت‌ویر پرمیوم</p>
             </div>
           </div>
