@@ -111,15 +111,21 @@ export const Header = () => {
                 </DropdownMenuTrigger>
                 <DropdownMenuContent align="start" className="w-56 p-2 glass-strong border-border/30 rounded-2xl">
                   {categories.map((category) => (
-                    <DropdownMenuItem key={category.path} asChild className="rounded-xl focus:bg-primary/10">
+                    <DropdownMenuItem
+                      key={category.path}
+                      asChild
+                      className="group rounded-xl focus:bg-primary/10 hover:bg-primary/5 transition-colors duration-200"
+                    >
                       <Link
                         to={category.path}
                         className={cn(
-                          "flex items-center gap-3 cursor-pointer py-3 px-4",
+                          "flex items-center gap-3 cursor-pointer py-3 px-4 text-foreground/80 group-hover:text-primary transition-colors duration-200",
                           isActive(category.path) && "text-primary"
                         )}
                       >
-                        <span className="text-lg">{category.icon}</span>
+                        <span className="text-lg group-hover:scale-110 transition-transform duration-200">
+                          {category.icon}
+                        </span>
                         <span className="font-medium">{category.label}</span>
                       </Link>
                     </DropdownMenuItem>
@@ -229,7 +235,7 @@ export const Header = () => {
                         "px-4 py-3 rounded-xl font-medium transition-all duration-300 flex items-center gap-3",
                         isActive(category.path)
                           ? "text-primary bg-primary/10"
-                          : "text-foreground/70 hover:text-foreground hover:bg-muted/30"
+                          : "text-foreground/70 hover:text-primary hover:bg-primary/5"
                       )}
                       onClick={() => setMobileMenuOpen(false)}
                     >
