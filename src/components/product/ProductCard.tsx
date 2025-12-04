@@ -39,6 +39,7 @@ export const ProductCard = ({ product }: ProductCardProps) => {
             src={product.images[0]}
             alt={product.name}
             className="object-cover w-full h-full transition-all duration-700 group-hover:scale-110"
+            loading="lazy"
           />
           
           {/* Gradient Overlay */}

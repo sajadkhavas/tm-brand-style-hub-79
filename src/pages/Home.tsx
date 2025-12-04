@@ -13,6 +13,7 @@ import { CheckCircle2, Truck, RotateCcw, ArrowLeft, Sparkles, Star, Zap, Heart, 
 import { useState, useRef } from 'react';
 import { useToast } from '@/hooks/use-toast';
 import { FloatingContactButton } from '@/components/layout/FloatingContactButton';
+import { useIsDesktop } from '@/hooks/useIsDesktop';
 
 import hoodieBlack from '@/assets/products/hoodie-black.png';
 import tshirtWhite from '@/assets/products/tshirt-white.png';
@@ -34,6 +35,7 @@ const Home = () => {
   const [email, setEmail] = useState('');
   const heroRef = useRef<HTMLDivElement>(null);
   const { toast } = useToast();
+  const isDesktop = useIsDesktop();
   
   const newProducts = products.filter(p => p.isNew).slice(0, 4);
   const bestSellers = products.filter(p => p.isBestSeller).slice(0, 4);
@@ -132,12 +134,23 @@ const Home = () => {
               </div>
             </div>
 
-            {/* 3D Brand Logo */}
+            {/* 3D Brand Logo - Desktop only */}
             <div className="order-1 lg:order-2 flex items-center justify-center animate-scale-in">
               <div className="relative w-full max-w-lg mx-auto">
                 {/* Glow Effect Behind */}
-                <div className="absolute inset-0 bg-primary/20 rounded-full blur-[100px] scale-75 morph-blob" />
-                <Hero3DText />
+                <div className="absolute inset-0 bg-primary/20 rounded-full blur-[100px] scale-75" />
+                {isDesktop ? (
+                  <Hero3DText />
+                ) : (
+                  <div className="text-center py-12">
+                    <h2 className="text-5xl font-extrabold text-primary font-display tracking-tight">
+                      TM-BRAND
+                    </h2>
+                    <p className="text-muted-foreground text-sm mt-2">
+                      استریت‌ویر پرمیوم
+                    </p>
+                  </div>
+                )}
               </div>
             </div>
           </div>
@@ -190,7 +203,7 @@ const Home = () => {
                 className="h-full"
               >
                 <Link to={`/${category.id}`} className="block h-full">
-                  <Card className="group relative overflow-hidden border-border/50 bg-card/50 backdrop-blur-sm hover:border-primary/50 transition-all duration-500 hover-lift h-full perspective-card gradient-border">
+                  <Card className="group relative overflow-hidden border-border/50 bg-card/50 backdrop-blur-sm hover:border-primary/50 transition-all duration-500 hover-lift h-full">
                     <div className="absolute inset-0 bg-gradient-to-t from-primary/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
                     <CardContent className="p-4 md:p-6 text-center relative z-10">
                       <div className="relative w-full aspect-square bg-muted/30 rounded-2xl mb-4 overflow-hidden">
@@ -198,6 +211,7 @@ const Home = () => {
                           src={categoryImages[category.id]} 
                           alt={category.name}
                           className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
+                          loading="lazy"
                         />
                         <div className="absolute inset-0 bg-gradient-to-t from-background/60 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
                       </div>
@@ -347,15 +361,15 @@ const Home = () => {
               </p>
             </ScrollReveal>
             
-            {/* Value Cards with 3D Effect */}
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-16 perspective-container">
+            {/* Value Cards */}
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-16">
               {[
                 { icon: CheckCircle2, title: 'اصالت', desc: 'محصولات ۱۰۰٪ اورجینال' },
                 { icon: Sparkles, title: 'کیفیت', desc: 'بهترین مواد و ساخت' },
                 { icon: Star, title: 'استایل', desc: 'طراحی‌های منحصر به فرد' },
               ].map((item, index) => (
-                <ScrollReveal key={index} animation="rotate" delay={index * 150}>
-                  <Card className="group relative overflow-hidden border-border/50 bg-card/50 backdrop-blur-sm hover:border-primary/50 transition-all duration-500 perspective-card gradient-border">
+                <ScrollReveal key={index} animation="fade-up" delay={index * 150}>
+                  <Card className="group relative overflow-hidden border-border/50 bg-card/50 backdrop-blur-sm hover:border-primary/50 transition-all duration-500">
                     <div className="absolute inset-0 bg-gradient-to-t from-primary/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
                     <CardContent className="p-8 text-center relative z-10">
                       <div className="w-16 h-16 bg-primary/10 rounded-2xl flex items-center justify-center mx-auto mb-6 group-hover:bg-primary/20 group-hover:scale-110 transition-all duration-500">
@@ -391,12 +405,12 @@ const Home = () => {
         
         <div className="container mx-auto px-4 relative z-10">
           <ScrollReveal animation="scale">
-            <Card className="max-w-3xl mx-auto border-primary/30 overflow-hidden bg-card/50 backdrop-blur-xl gradient-border">
+            <Card className="max-w-3xl mx-auto border-primary/30 overflow-hidden bg-card/50 backdrop-blur-xl">
               <div className="absolute inset-0 bg-gradient-to-br from-primary/5 to-transparent" />
-              <div className="absolute top-0 right-0 w-96 h-96 bg-primary/10 rounded-full blur-[100px] morph-blob" />
+              <div className="absolute top-0 right-0 w-96 h-96 bg-primary/10 rounded-full blur-[100px]" />
               
               <CardContent className="p-10 md:p-16 text-center relative z-10" dir="rtl">
-                <Badge className="mb-6 text-lg px-6 py-2 animate-pulse-glow">به زودی</Badge>
+                <Badge className="mb-6 text-lg px-6 py-2">به زودی</Badge>
                 <h2 className="text-foreground mb-6">
                   کلکسیون زنانه در راه است!
                 </h2>
@@ -414,7 +428,7 @@ const Home = () => {
                     className="flex-1 h-14 rounded-xl bg-background/50 border-border/50 focus:border-primary"
                     dir="rtl"
                   />
-                  <Button type="submit" size="lg" className="h-14 px-8 rounded-xl shadow-neon hover:shadow-neon-strong">
+                  <Button type="submit" size="lg" className="h-14 px-8 rounded-xl">
                     ثبت اطلاعات
                   </Button>
                 </form>
