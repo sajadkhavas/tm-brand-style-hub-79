@@ -1,8 +1,11 @@
 import { BlogPost } from '@/types';
+import { strapiClient } from './strapi';
 
-const delay = (ms = 200) => new Promise(resolve => setTimeout(resolve, ms));
+// Flag to use Strapi or local data
+const USE_STRAPI = import.meta.env.VITE_USE_STRAPI === 'true';
 
-const blogPosts: BlogPost[] = [
+// Local blog posts (fallback)
+const localBlogPosts: BlogPost[] = [
   {
     id: '1',
     slug: 'hoodie-winter-guide',
@@ -51,12 +54,66 @@ const blogPosts: BlogPost[] = [
   },
 ];
 
-export const getBlogPosts = async (): Promise<BlogPost[]> => {
-  await delay();
-  return blogPosts;
+/**
+ * Transform Strapi blog post to our BlogPost type
+ */
+const transformStrapiBlogPost = (item: any): BlogPost => {
+  const attrs = item.attributes;
+  
+  // Handle content - can be string or array
+  let content: string[];
+  if (Array.isArray(attrs.content)) {
+    content = attrs.content;
+  } else if (typeof attrs.content === 'string') {
+    content = attrs.content.split('\n\n').filter(Boolean);
+  } else {
+    content = [];
+  }
+
+  return {
+    id: item.id.toString(),
+    slug: attrs.slug,
+    title: attrs.title,
+    excerpt: attrs.excerpt || '',
+    content,
+    tags: attrs.tags || [],
+    publishedAt: attrs.publishedAt || '',
+    readTimeMinutes: attrs.readTimeMinutes || 3,
+  };
 };
 
+/**
+ * Get all blog posts
+ */
+export const getBlogPosts = async (): Promise<BlogPost[]> => {
+  if (!USE_STRAPI) {
+    return localBlogPosts;
+  }
+
+  try {
+    const data = await strapiClient.get<any[]>('/blog-posts?populate=*&sort=createdAt:desc');
+    return data.map(transformStrapiBlogPost);
+  } catch (error) {
+    console.error('Failed to fetch blog posts from Strapi, using local data:', error);
+    return localBlogPosts;
+  }
+};
+
+/**
+ * Get single blog post by slug
+ */
 export const getBlogPostBySlug = async (slug: string): Promise<BlogPost | undefined> => {
-  await delay();
-  return blogPosts.find(post => post.slug === slug);
+  if (!USE_STRAPI) {
+    return localBlogPosts.find(post => post.slug === slug);
+  }
+
+  try {
+    const data = await strapiClient.get<any[]>(
+      `/blog-posts?filters[slug][$eq]=${slug}&populate=*`
+    );
+    return data[0] ? transformStrapiBlogPost(data[0]) : undefined;
+  } catch (error) {
+    console.error('Failed to fetch blog post from Strapi, using local data:', error);
+    return localBlogPosts.find(post => post.slug === slug);
+  }
 };
