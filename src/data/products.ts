@@ -403,7 +403,7 @@ export const products: Product[] = [
     name: 'کفش بسکتبال ایرجردن ۱ رترو های – برد تو',
     nameEn: 'Air Jordan 1 Retro High - Bred Toe',
     category: 'shoes',
-    subcategory: 'basketball',
+    categoryId: 'shoes',
     gender: 'unisex',
     price: 12500000,
     sizes: ['38', '39', '40', '41', '42', '43', '44', '45', '46'],

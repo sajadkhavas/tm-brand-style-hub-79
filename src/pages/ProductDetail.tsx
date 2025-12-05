@@ -17,16 +17,16 @@ const ProductDetail = () => {
   const { slug } = useParams();
   const { addToCart } = useCartStore();
   const { toast } = useToast();
-  const { data: product, isLoading } = useQuery<Product | undefined>(
-    ['product', slug],
-    () => getProductBySlug(slug || ''),
-    { enabled: Boolean(slug) }
-  );
-  const { data: relatedProducts } = useQuery<Product[]>(
-    ['related', product?.categoryId || product?.category],
-    () => getProducts({ categoryId: product?.categoryId || product?.category }),
-    { enabled: Boolean(product) }
-  );
+  const { data: product, isLoading } = useQuery<Product | undefined>({
+    queryKey: ['product', slug],
+    queryFn: () => getProductBySlug(slug || ''),
+    enabled: Boolean(slug)
+  });
+  const { data: relatedProducts } = useQuery<Product[]>({
+    queryKey: ['related', product?.categoryId || product?.category],
+    queryFn: () => getProducts({ categoryId: product?.categoryId || product?.category }),
+    enabled: Boolean(product)
+  });
   const relatedList = relatedProducts || [];
   const [selectedSize, setSelectedSize] = useState('');
   const [selectedColor, setSelectedColor] = useState('');
