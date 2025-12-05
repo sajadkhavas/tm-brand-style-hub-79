@@ -1,26 +1,26 @@
 import { Link } from 'react-router-dom';
-import { useCart } from '@/contexts/CartContext';
+import { useCartStore } from '@/store/cart';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Minus, Plus, Trash2, ShoppingBag } from 'lucide-react';
 
 const Cart = () => {
-  const { items, updateQuantity, removeItem, getTotalPrice } = useCart();
+  const { items, updateQuantity, removeItem, totalPrice } = useCartStore();
 
   const formatPrice = (price: number) => {
     return price.toLocaleString('fa-IR') + ' تومان';
   };
 
-  const generateWhatsAppMessage = () => {
-    const orderDetails = items.map((item, index) => 
-      `${index + 1}. ${item.product.name}\n   سایز: ${item.selectedSize} | رنگ: ${item.selectedColor} | تعداد: ${item.quantity}\n   قیمت: ${formatPrice(item.product.price * item.quantity)}`
-    ).join('\n\n');
+    const generateWhatsAppMessage = () => {
+      const orderDetails = items.map((item, index) =>
+        `${index + 1}. ${item.productSnapshot.name}\n   ${item.variant?.size ? `سایز: ${item.variant.size} ` : ''}${item.variant?.color ? `| رنگ: ${item.variant.color} ` : ''}| تعداد: ${item.quantity}\n   قیمت: ${formatPrice(item.priceAtAddTime * item.quantity)}`
+      ).join('\n\n');
 
-    const total = formatPrice(getTotalPrice());
-    const message = `سلام! می‌خواهم سفارش زیر را ثبت کنم:\n\n${orderDetails}\n\n💰 جمع کل: ${total}`;
-    
-    return encodeURIComponent(message);
-  };
+      const total = formatPrice(totalPrice);
+      const message = `سلام! می‌خواهم سفارش زیر را ثبت کنم:\n\n${orderDetails}\n\n💰 جمع کل: ${total}`;
+
+      return encodeURIComponent(message);
+    };
 
   const handleWhatsAppOrder = () => {
     const phoneNumber = '989123456789'; // Replace with actual WhatsApp number
@@ -52,24 +52,24 @@ const Cart = () => {
           {/* Cart Items */}
           <div className="lg:col-span-2 space-y-4">
             {items.map((item) => (
-              <Card key={`${item.product.id}-${item.selectedSize}-${item.selectedColor}`}>
+              <Card key={item.id}>
                 <CardContent className="p-4">
                   <div className="flex gap-4" dir="rtl">
                     {/* Image */}
                     <img
-                      src={item.product.images[0]}
-                      alt={item.product.name}
+                      src={item.productSnapshot.images[0]}
+                      alt={item.productSnapshot.name}
                       className="w-24 h-24 object-cover rounded-lg bg-muted"
                     />
 
                     {/* Info */}
                     <div className="flex-1">
-                      <h3 className="font-semibold text-lg mb-1">{item.product.name}</h3>
+                      <h3 className="font-semibold text-lg mb-1">{item.productSnapshot.name}</h3>
                       <p className="text-sm text-muted-foreground mb-2">
-                        سایز: {item.selectedSize} | رنگ: {item.selectedColor}
+                        {item.variant?.size && <>سایز: {item.variant.size}</>} {item.variant?.color && <>| رنگ: {item.variant.color}</>}
                       </p>
                       <p className="text-primary font-bold">
-                        {formatPrice(item.product.price)}
+                        {formatPrice(item.priceAtAddTime)}
                       </p>
                     </div>
 
@@ -78,17 +78,17 @@ const Cart = () => {
                       <Button
                         variant="ghost"
                         size="icon"
-                        onClick={() => removeItem(item.product.id, item.selectedSize, item.selectedColor)}
+                        onClick={() => removeItem(item.id)}
                       >
                         <Trash2 className="h-4 w-4" />
                       </Button>
-                      
+
                       <div className="flex items-center gap-2">
                         <Button
                           variant="outline"
                           size="icon"
                           className="h-8 w-8"
-                          onClick={() => updateQuantity(item.product.id, item.selectedSize, item.selectedColor, item.quantity - 1)}
+                          onClick={() => updateQuantity(item.id, item.quantity - 1)}
                         >
                           <Minus className="h-3 w-3" />
                         </Button>
@@ -97,7 +97,7 @@ const Cart = () => {
                           variant="outline"
                           size="icon"
                           className="h-8 w-8"
-                          onClick={() => updateQuantity(item.product.id, item.selectedSize, item.selectedColor, item.quantity + 1)}
+                          onClick={() => updateQuantity(item.id, item.quantity + 1)}
                         >
                           <Plus className="h-3 w-3" />
                         </Button>
@@ -128,7 +128,7 @@ const Cart = () => {
 
                 <div className="flex justify-between text-xl font-bold mb-6">
                   <span>جمع کل:</span>
-                  <span className="text-primary">{formatPrice(getTotalPrice())}</span>
+                  <span className="text-primary">{formatPrice(totalPrice)}</span>
                 </div>
 
                 <div className="space-y-3">

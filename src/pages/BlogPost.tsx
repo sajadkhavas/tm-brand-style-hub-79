@@ -1,56 +1,25 @@
 import { useParams, Link } from 'react-router-dom';
+import { useQuery } from '@tanstack/react-query';
 import { Badge } from '@/components/ui/badge';
 import { CalendarDays, Clock, ArrowRight } from 'lucide-react';
-
-const posts: Record<string, {
-  title: string;
-  date: string;
-  readTime: string;
-  tag: string;
-  content: string[];
-}> = {
-  'hoodie-winter-guide': {
-    title: 'راهنمای انتخاب هودی زمستانی TM-BRAND',
-    date: '۱۴ دی ۱۴۰۳',
-    readTime: '۴ دقیقه',
-    tag: 'استایل زمستانی',
-    content: [
-      'هودی یکی از آیتم‌های اصلی استایل خیابانی است؛ مخصوصاً در پاییز و زمستان. اگر قرار است هر روز از یک هودی استفاده کنی، انتخاب جنس و تن‌خور درست خیلی مهم است.',
-      'در TM-BRAND ما تمرکزمان روی پارچه‌های نرم، گرم و مقاوم است که بعد از چند بار شست‌وشو، خراب نشوند. اگر به استایل مینیمال علاقه داری، هودی‌های مشکی، طوسی و خاکی بهترین انتخاب هستند.',
-      'برای استایل جسورتر، می‌توانی از رنگ‌های خاص‌تر استفاده کنی؛ به شرطی که شلوار و کتانی را ساده انتخاب کنی تا استایل شلوغ نشود.',
-      'در نهایت، سعی کن هودی را نه خیلی تنگ بگیری نه بیش از حد اورسایز؛ دو انگشت فضای اضافه در عرض شانه، معمولاً اندازه‌ی مناسبی برای استایل روزمره است.',
-    ],
-  },
-  'cargo-pants-styling': {
-    title: '۳ روش ساده برای ست کردن شلوار کارگو',
-    date: '۲۰ دی ۱۴۰۳',
-    readTime: '۳ دقیقه',
-    tag: 'استایل روزمره',
-    content: [
-      'شلوار کارگو یکی از پرطرفدارترین آیتم‌های استریت‌ویر است. با جیب‌های بزرگ و فرم راحتش، هم کاربردی است هم استایلی.',
-      'روش اول: با هودی اورسایز. این ترکیب کلاسیک استریت‌ویر است. یک هودی ساده با کارگو و کتانی سفید، تمام!',
-      'روش دوم: با تیشرت فیت و کتانی حجیم. اگر می‌خواهی بالاتنه‌ات ساده‌تر باشد، یک تیشرت ساده با کارگو و یک کتانی chunky عالی می‌شود.',
-      'روش سوم: لایه‌بندی با ژاکت. برای روزهای سردتر، یک ژاکت یا بمبر روی تیشرت بپوش و با کارگو ست کن.',
-    ],
-  },
-  'hoodie-care-tips': {
-    title: 'چند روش برای مراقبت از هودی و تیشرت‌های پنبه‌ای',
-    date: '۲۵ دی ۱۴۰۳',
-    readTime: '۲ دقیقه',
-    tag: 'نگهداری لباس',
-    content: [
-      'لباس‌های پنبه‌ای اگر درست نگهداری نشوند، زود رنگشان می‌پرد یا فرمشان خراب می‌شود.',
-      'نکته اول: همیشه لباس را برعکس (از داخل) بشور. این کار از رنگ‌پریدگی جلوگیری می‌کند.',
-      'نکته دوم: از آب سرد یا ولرم استفاده کن. آب داغ باعث جمع شدن پارچه می‌شود.',
-      'نکته سوم: لباس‌ها را در سایه خشک کن. نور مستقیم آفتاب رنگ را می‌پراند.',
-      'نکته چهارم: هودی‌ها را تا نزن، آویزان کن. این کار از چروک شدن جلوگیری می‌کند.',
-    ],
-  },
-};
+import { getBlogPostBySlug } from '@/api/blog';
 
 const BlogPost = () => {
   const { slug } = useParams<{ slug: string }>();
-  const post = slug ? posts[slug] : null;
+  const { data: post, isLoading } = useQuery(['blog-post', slug], () => getBlogPostBySlug(slug || ''), {
+    enabled: Boolean(slug),
+  });
+
+  if (isLoading) {
+    return (
+      <main className="min-h-screen flex items-center justify-center bg-background" dir="rtl">
+        <div className="space-y-2 text-center">
+          <div className="mx-auto h-10 w-10 rounded-full bg-primary/10 animate-pulse" />
+          <p className="text-muted-foreground">در حال بارگذاری مقاله...</p>
+        </div>
+      </main>
+    );
+  }
 
   if (!post) {
     return (
@@ -83,14 +52,14 @@ const BlogPost = () => {
           <div className="flex flex-wrap items-center gap-3 text-xs text-muted-foreground mb-6">
             <span className="flex items-center gap-1">
               <CalendarDays className="w-4 h-4" />
-              {post.date}
+              {post.publishedAt}
             </span>
             <span className="flex items-center gap-1">
               <Clock className="w-4 h-4" />
-              {post.readTime}
+              {post.readTimeMinutes} دقیقه
             </span>
             <span className="px-3 py-1 rounded-full bg-primary/10 text-primary text-[11px] font-medium">
-              {post.tag}
+              {post.tags?.[0]}
             </span>
           </div>
         </div>

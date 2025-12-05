@@ -1,39 +1,24 @@
 import { Link } from 'react-router-dom';
+import { useQuery } from '@tanstack/react-query';
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { CalendarDays, Clock } from 'lucide-react';
-
-const posts = [
-  {
-    slug: 'hoodie-winter-guide',
-    title: 'راهنمای انتخاب هودی زمستانی TM-BRAND',
-    excerpt:
-      'چطور هودی مناسب استایل زمستانی خودت را انتخاب کنی تا هم گرم بمانی هم استایلت خفن باشد؟',
-    readTime: '۴ دقیقه',
-    date: '۱۴ دی ۱۴۰۳',
-    tag: 'استایل زمستانی',
-  },
-  {
-    slug: 'cargo-pants-styling',
-    title: '۳ روش ساده برای ست کردن شلوار کارگو',
-    excerpt:
-      'اگر کارگو دوست داری اما نمی‌دانی با چی ستش کنی، این مقاله مخصوص توست.',
-    readTime: '۳ دقیقه',
-    date: '۲۰ دی ۱۴۰۳',
-    tag: 'استایل روزمره',
-  },
-  {
-    slug: 'hoodie-care-tips',
-    title: 'چند روش برای مراقبت از هودی و تیشرت‌های پنبه‌ای',
-    excerpt:
-      'با این نکات ساده، لباس‌هایت همیشه تازه و با کیفیت می‌مانند.',
-    readTime: '۲ دقیقه',
-    date: '۲۵ دی ۱۴۰۳',
-    tag: 'نگهداری لباس',
-  },
-];
+import { getBlogPosts } from '@/api/blog';
 
 const Blog = () => {
+  const { data: posts = [], isLoading } = useQuery(['blog-posts'], getBlogPosts);
+
+  if (isLoading) {
+    return (
+      <main className="min-h-screen flex items-center justify-center bg-background" dir="rtl">
+        <div className="space-y-2 text-center">
+          <div className="mx-auto h-10 w-10 rounded-full bg-primary/10 animate-pulse" />
+          <p className="text-muted-foreground">در حال بارگذاری مقالات...</p>
+        </div>
+      </main>
+    );
+  }
+
   return (
     <main className="min-h-screen bg-background" dir="rtl">
       <section className="pt-28 pb-16 border-b border-border/40">
@@ -60,11 +45,11 @@ const Blog = () => {
                 <div className="flex items-center justify-between gap-3 text-xs text-muted-foreground">
                   <span className="flex items-center gap-1">
                     <CalendarDays className="w-4 h-4" />
-                    {post.date}
+                    {post.publishedAt}
                   </span>
                   <span className="flex items-center gap-1">
                     <Clock className="w-4 h-4" />
-                    {post.readTime}
+                    {post.readTimeMinutes} دقیقه
                   </span>
                 </div>
 
@@ -83,7 +68,7 @@ const Blog = () => {
 
                 <div className="mt-2 flex items-center justify-between">
                   <span className="px-3 py-1 rounded-full bg-primary/10 text-primary text-[11px] font-medium">
-                    {post.tag}
+                    {post.tags?.[0]}
                   </span>
                   <Link
                     to={`/blog/${post.slug}`}

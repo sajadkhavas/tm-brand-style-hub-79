@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { useCart } from '@/contexts/CartContext';
+import { useCartStore } from '@/store/cart';
 import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -9,7 +9,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { Badge } from '@/components/ui/badge';
 
 const Checkout = () => {
-  const { items, getTotalPrice } = useCart();
+  const { items, totalPrice } = useCartStore();
   const navigate = useNavigate();
   
   const [formData, setFormData] = useState({
@@ -155,19 +155,19 @@ const Checkout = () => {
               <CardContent dir="rtl">
                 <div className="space-y-4 mb-6">
                   {items.map((item) => (
-                    <div key={`${item.product.id}-${item.selectedSize}-${item.selectedColor}`} className="flex gap-3">
+                    <div key={item.id} className="flex gap-3">
                       <img
-                        src={item.product.images[0]}
-                        alt={item.product.name}
+                        src={item.productSnapshot.images[0]}
+                        alt={item.productSnapshot.name}
                         className="w-16 h-16 object-cover rounded bg-muted"
                       />
                       <div className="flex-1">
-                        <p className="font-semibold text-sm">{item.product.name}</p>
+                        <p className="font-semibold text-sm">{item.productSnapshot.name}</p>
                         <p className="text-xs text-muted-foreground">
-                          {item.selectedSize} | {item.selectedColor} | تعداد: {item.quantity}
+                          {item.variant?.size && <>سایز: {item.variant.size}</>} {item.variant?.color && <>| رنگ: {item.variant.color}</>} | تعداد: {item.quantity}
                         </p>
                         <p className="text-sm text-primary font-semibold">
-                          {formatPrice(item.product.price * item.quantity)}
+                          {formatPrice(item.priceAtAddTime * item.quantity)}
                         </p>
                       </div>
                     </div>
@@ -177,7 +177,7 @@ const Checkout = () => {
                 <div className="space-y-2 pt-4 border-t border-border">
                   <div className="flex justify-between text-sm">
                     <span className="text-muted-foreground">جمع محصولات:</span>
-                    <span>{formatPrice(getTotalPrice())}</span>
+                    <span>{formatPrice(totalPrice)}</span>
                   </div>
                   <div className="flex justify-between text-sm">
                     <span className="text-muted-foreground">هزینه ارسال:</span>
@@ -185,7 +185,7 @@ const Checkout = () => {
                   </div>
                   <div className="flex justify-between text-lg font-bold pt-2 border-t border-border">
                     <span>جمع کل:</span>
-                    <span className="text-primary">{formatPrice(getTotalPrice())}</span>
+                    <span className="text-primary">{formatPrice(totalPrice)}</span>
                   </div>
                 </div>
               </CardContent>

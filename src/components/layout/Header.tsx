@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { Menu, X, ShoppingCart, Search, ChevronDown } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { useCart } from '@/contexts/CartContext';
+import { useCartStore } from '@/store/cart';
 import { cn } from '@/lib/utils';
 import { SearchDialog } from '@/components/search/SearchDialog';
 import {
@@ -25,8 +25,7 @@ export const Header = () => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const [searchOpen, setSearchOpen] = useState(false);
-  const { getTotalItems } = useCart();
-  const totalItems = getTotalItems();
+  const { totalItems } = useCartStore();
   const location = useLocation();
 
   useEffect(() => {

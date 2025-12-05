@@ -1,10 +1,12 @@
 import { useState } from 'react';
 import { useParams, Link } from 'react-router-dom';
-import { products } from '@/data/products';
+import { useQuery } from '@tanstack/react-query';
+import { getProductBySlug, getProducts } from '@/api/products';
+import { useCartStore } from '@/store/cart';
+import { Product } from '@/types';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { ProductCard } from '@/components/product/ProductCard';
-import { useCart } from '@/contexts/CartContext';
 import { useToast } from '@/hooks/use-toast';
 import { ChevronRight, CheckCircle2, Truck, RotateCcw, Minus, Plus, Package, Ruler } from 'lucide-react';
 import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from '@/components/ui/carousel';
@@ -13,14 +15,34 @@ import Autoplay from 'embla-carousel-autoplay';
 
 const ProductDetail = () => {
   const { slug } = useParams();
-  const { addItem } = useCart();
+  const { addToCart } = useCartStore();
   const { toast } = useToast();
-
-  const product = products.find(p => p.slug === slug);
+  const { data: product, isLoading } = useQuery<Product | undefined>(
+    ['product', slug],
+    () => getProductBySlug(slug || ''),
+    { enabled: Boolean(slug) }
+  );
+  const { data: relatedProducts } = useQuery<Product[]>(
+    ['related', product?.categoryId || product?.category],
+    () => getProducts({ categoryId: product?.categoryId || product?.category }),
+    { enabled: Boolean(product) }
+  );
+  const relatedList = relatedProducts || [];
   const [selectedSize, setSelectedSize] = useState('');
   const [selectedColor, setSelectedColor] = useState('');
   const [quantity, setQuantity] = useState(1);
   const [selectedImageIndex, setSelectedImageIndex] = useState(0);
+
+  if (isLoading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center" dir="rtl">
+        <div className="text-center space-y-2">
+          <div className="animate-pulse h-6 w-32 bg-muted rounded-full mx-auto" />
+          <p className="text-muted-foreground">در حال بارگذاری محصول...</p>
+        </div>
+      </div>
+    );
+  }
 
   if (!product) {
     return (
@@ -34,10 +56,6 @@ const ProductDetail = () => {
       </div>
     );
   }
-
-  const relatedProducts = products
-    .filter(p => p.category === product.category && p.id !== product.id)
-    .slice(0, 4);
 
   const handleAddToCart = () => {
     if (!selectedSize) {
@@ -57,7 +75,7 @@ const ProductDetail = () => {
       return;
     }
 
-    addItem(product, selectedSize, selectedColor, quantity);
+    addToCart(product, { size: selectedSize, color: selectedColor }, quantity);
     toast({
       title: "افزودن به سبد خرید",
       description: `${product.name} به سبد خرید اضافه شد`,
@@ -379,13 +397,13 @@ const ProductDetail = () => {
         </div>
 
         {/* Related Products */}
-        {relatedProducts.length > 0 && (
+        {relatedList.length > 0 && (
           <div>
             <h2 className="text-3xl font-bold text-foreground mb-8" dir="rtl">
               محصولات مشابه
             </h2>
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-              {relatedProducts.map((product) => (
+              {relatedList.map((product) => (
                 <ProductCard key={product.id} product={product} />
               ))}
             </div>
