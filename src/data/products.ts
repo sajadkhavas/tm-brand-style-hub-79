@@ -4,32 +4,7 @@ import pantsCargo from '@/assets/products/pants-cargo.png';
 import jeansSlim from '@/assets/products/jeans-slim.png';
 import sneakersNeon from '@/assets/products/sneakers-neon.png';
 import capBlack from '@/assets/products/cap-black.png';
-
-export interface Product {
-  id: string;
-  slug: string;
-  name: string;
-  nameEn: string;
-  category: string;
-  subcategory?: string;
-  gender: 'men' | 'women' | 'unisex';
-  price: number;
-  sizes: string[];
-  colors: Array<{ name: string; hex: string }>;
-  description: string;
-  longDescription?: string;
-  features?: string[];
-  specifications?: Array<{ label: string; value: string }>;
-  sizeGuide?: string;
-  materials?: string;
-  images: string[];
-  isNew?: boolean;
-  isBestSeller?: boolean;
-  isOnSale?: boolean;
-  seoTitle?: string;
-  seoDescription?: string;
-  seoKeywords?: string[];
-}
+import { Product, Category } from '@/types';
 
 export const products: Product[] = [
   // Hoodies & Sweatshirts
@@ -39,6 +14,7 @@ export const products: Product[] = [
     name: 'هودی اسپرت TM-BRAND',
     nameEn: 'TM-BRAND Signature Hoodie',
     category: 'hoodies',
+    categoryId: 'hoodies',
     gender: 'men',
     price: 1850000,
     sizes: ['S', 'M', 'L', 'XL', 'XXL'],
@@ -58,6 +34,7 @@ export const products: Product[] = [
     name: 'هودی اورسایز استریت',
     nameEn: 'Oversized Streetwear Hoodie',
     category: 'hoodies',
+    categoryId: 'hoodies',
     gender: 'men',
     price: 2150000,
     sizes: ['M', 'L', 'XL', 'XXL'],
@@ -75,6 +52,7 @@ export const products: Product[] = [
     name: 'سویشرت زیپ‌دار اسپرت',
     nameEn: 'Zip-Up Sport Hoodie',
     category: 'hoodies',
+    categoryId: 'hoodies',
     gender: 'men',
     price: 1650000,
     sizes: ['S', 'M', 'L', 'XL'],
@@ -94,6 +72,7 @@ export const products: Product[] = [
     name: 'تیشرت لوگو TM-BRAND',
     nameEn: 'TM-BRAND Logo Tee',
     category: 'tshirts',
+    categoryId: 'tshirts',
     gender: 'men',
     price: 550000,
     sizes: ['S', 'M', 'L', 'XL', 'XXL'],
@@ -509,11 +488,11 @@ export const products: Product[] = [
   }
 ];
 
-export const categories = [
-  { id: 'hoodies', name: 'هودی و سویشرت', nameEn: 'Hoodies & Sweatshirts', slug: 'hoodies' },
-  { id: 'tshirts', name: 'تیشرت', nameEn: 'T-Shirts', slug: 'tshirts' },
-  { id: 'pants', name: 'شلوار', nameEn: 'Pants & Joggers', slug: 'pants' },
-  { id: 'jeans', name: 'شلوار جین', nameEn: 'Jeans', slug: 'jeans' },
-  { id: 'shoes', name: 'کفش', nameEn: 'Sneakers & Shoes', slug: 'shoes' },
-  { id: 'accessories', name: 'اکسسوری', nameEn: 'Accessories', slug: 'accessories' }
+export const categories: Category[] = [
+  { id: 'hoodies', name: 'هودی و سویشرت', slug: 'hoodies' },
+  { id: 'tshirts', name: 'تیشرت', slug: 'tshirts' },
+  { id: 'pants', name: 'شلوار', slug: 'pants' },
+  { id: 'jeans', name: 'شلوار جین', slug: 'jeans' },
+  { id: 'shoes', name: 'کفش', slug: 'shoes' },
+  { id: 'accessories', name: 'اکسسوری', slug: 'accessories' }
 ];

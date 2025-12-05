@@ -1,7 +1,8 @@
 import { useState, useMemo } from 'react';
+import { useQuery } from '@tanstack/react-query';
 import { useSearchParams } from 'react-router-dom';
 import { ProductCard } from '@/components/product/ProductCard';
-import { products, categories } from '@/data/products';
+import { getProducts, getCategories } from '@/api/products';
 import { Button } from '@/components/ui/button';
 import { Slider } from '@/components/ui/slider';
 import { Checkbox } from '@/components/ui/checkbox';
@@ -38,6 +39,9 @@ const Shop = () => {
   const [priceRange, setPriceRange] = useState([0, 15000000]);
   const [sortBy, setSortBy] = useState('newest');
   const [gridCols, setGridCols] = useState<2 | 3>(3);
+
+  const { data: products = [], isLoading } = useQuery(['products'], () => getProducts());
+  const { data: categories = [] } = useQuery(['categories'], getCategories);
 
   const availableSizes = useMemo(() => {
     const allSizes = new Set<string>();
@@ -81,7 +85,7 @@ const Shop = () => {
     }
 
     return filtered;
-  }, [selectedCategories, selectedSizes, selectedGenders, priceRange, sortBy, filterParam]);
+  }, [products, selectedCategories, selectedSizes, selectedGenders, priceRange, sortBy, filterParam]);
 
   const toggleCategory = (categoryId: string) => {
     setSelectedCategories(prev =>
@@ -106,6 +110,17 @@ const Shop = () => {
         : [...prev, genderId]
     );
   };
+
+  if (isLoading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center" dir="rtl">
+        <div className="space-y-3 text-center">
+          <div className="mx-auto h-10 w-10 rounded-full bg-primary/10 animate-pulse" />
+          <p className="text-muted-foreground">در حال بارگذاری محصولات...</p>
+        </div>
+      </div>
+    );
+  }
 
   const clearFilters = () => {
     setSelectedCategories([]);
