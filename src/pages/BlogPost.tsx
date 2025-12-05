@@ -6,7 +6,9 @@ import { getBlogPostBySlug } from '@/api/blog';
 
 const BlogPost = () => {
   const { slug } = useParams<{ slug: string }>();
-  const { data: post, isLoading } = useQuery(['blog-post', slug], () => getBlogPostBySlug(slug || ''), {
+  const { data: post, isLoading } = useQuery({
+    queryKey: ['blog-post', slug],
+    queryFn: () => getBlogPostBySlug(slug || ''),
     enabled: Boolean(slug),
   });
 

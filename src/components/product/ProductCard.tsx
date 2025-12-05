@@ -1,5 +1,5 @@
 import { Link } from 'react-router-dom';
-import { Product } from '@/data/products';
+import { Product } from '@/types';
 import { Badge } from '@/components/ui/badge';
 import { Card } from '@/components/ui/card';
 import { ShoppingCart, Eye, Heart } from 'lucide-react';

@@ -6,7 +6,10 @@ import { CalendarDays, Clock } from 'lucide-react';
 import { getBlogPosts } from '@/api/blog';
 
 const Blog = () => {
-  const { data: posts = [], isLoading } = useQuery(['blog-posts'], getBlogPosts);
+  const { data: posts = [], isLoading } = useQuery({
+    queryKey: ['blog-posts'],
+    queryFn: getBlogPosts
+  });
 
   if (isLoading) {
     return (

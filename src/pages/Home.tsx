@@ -218,7 +218,7 @@ const Home = () => {
                       <h3 className="font-semibold text-foreground group-hover:text-primary transition-colors duration-300" dir="rtl">
                         {category.name}
                       </h3>
-                      <p className="text-xs text-muted-foreground mt-1 font-display">{category.nameEn}</p>
+                      <p className="text-xs text-muted-foreground mt-1 font-display">{category.slug}</p>
                     </CardContent>
                   </Card>
                 </Link>

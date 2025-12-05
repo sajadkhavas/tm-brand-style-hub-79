@@ -30,6 +30,7 @@ export interface Product {
   colors: ColorOption[];
   variants?: ProductVariant[];
   specifications?: Array<{ label: string; value: string }>;
+  features?: string[];
   sizeGuide?: string;
   materials?: string;
   gender?: 'men' | 'women' | 'unisex';
@@ -38,6 +39,10 @@ export interface Product {
   isNew?: boolean;
   isBestSeller?: boolean;
   isFeatured?: boolean;
+  isOnSale?: boolean;
+  seoTitle?: string;
+  seoDescription?: string;
+  seoKeywords?: string[];
 }
 
 export interface Category {

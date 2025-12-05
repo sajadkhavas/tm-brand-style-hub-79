@@ -40,8 +40,14 @@ const Shop = () => {
   const [sortBy, setSortBy] = useState('newest');
   const [gridCols, setGridCols] = useState<2 | 3>(3);
 
-  const { data: products = [], isLoading } = useQuery(['products'], () => getProducts());
-  const { data: categories = [] } = useQuery(['categories'], getCategories);
+  const { data: products = [], isLoading } = useQuery({
+    queryKey: ['products'],
+    queryFn: () => getProducts()
+  });
+  const { data: categories = [] } = useQuery({
+    queryKey: ['categories'],
+    queryFn: getCategories
+  });
 
   const availableSizes = useMemo(() => {
     const allSizes = new Set<string>();
