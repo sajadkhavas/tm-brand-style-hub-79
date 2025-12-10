@@ -110,17 +110,19 @@ export const Hero3DText = () => {
     <div className="relative w-full h-full flex items-center justify-center">
       {/* Multiple glow layers for depth */}
       <div className="absolute inset-0 flex items-center justify-center">
-        <div className="w-96 h-96 bg-primary/30 rounded-full blur-[100px] animate-pulse" />
+        <div className="w-48 h-48 md:w-96 md:h-96 bg-primary/30 rounded-full blur-[80px] md:blur-[100px] animate-pulse" />
       </div>
       <div className="absolute inset-0 flex items-center justify-center">
-        <div className="w-64 h-64 bg-primary/20 rounded-full blur-3xl animate-pulse" style={{ animationDelay: '0.5s' }} />
+        <div className="w-32 h-32 md:w-64 md:h-64 bg-primary/20 rounded-full blur-2xl md:blur-3xl animate-pulse" style={{ animationDelay: '0.5s' }} />
       </div>
       
-      {/* 3D Text Canvas */}
-      <div className="relative z-10 w-full h-[400px]">
+      {/* 3D Text Canvas - responsive sizes */}
+      <div className="relative z-10 w-full h-[250px] sm:h-[300px] md:h-[400px]">
         <Canvas
           camera={{ position: [0, 0, 12], fov: 35 }}
           gl={{ antialias: true, alpha: true }}
+          dpr={[1, 1.5]}
+          performance={{ min: 0.5 }}
         >
           {/* Lighting Setup */}
           <ambientLight intensity={0.3} />
@@ -178,10 +180,9 @@ export const Hero3DText = () => {
         </Canvas>
       </div>
 
-      {/* Additional animated glow accents */}
-      <div className="absolute top-1/4 left-1/4 w-40 h-40 bg-primary/15 rounded-full blur-3xl animate-pulse" style={{ animationDelay: '0.3s' }} />
-      <div className="absolute bottom-1/3 right-1/3 w-32 h-32 bg-primary/15 rounded-full blur-2xl animate-pulse" style={{ animationDelay: '0.8s' }} />
-      <div className="absolute top-1/2 right-1/4 w-24 h-24 bg-primary/10 rounded-full blur-xl animate-pulse" style={{ animationDelay: '1.2s' }} />
+      {/* Additional animated glow accents - smaller on mobile */}
+      <div className="absolute top-1/4 left-1/4 w-20 h-20 md:w-40 md:h-40 bg-primary/15 rounded-full blur-2xl md:blur-3xl animate-pulse" style={{ animationDelay: '0.3s' }} />
+      <div className="absolute bottom-1/3 right-1/3 w-16 h-16 md:w-32 md:h-32 bg-primary/15 rounded-full blur-xl md:blur-2xl animate-pulse" style={{ animationDelay: '0.8s' }} />
     </div>
   );
 };

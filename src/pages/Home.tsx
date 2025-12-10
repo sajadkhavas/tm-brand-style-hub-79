@@ -91,14 +91,14 @@ const Home = () => {
               </div>
 
               {/* Main Heading */}
-              <h1 className="text-hero font-bold text-foreground mb-8 leading-[1.1] animate-fade-in" style={{ animationDelay: '0.1s' }}>
+              <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-hero font-bold text-foreground mb-6 md:mb-8 leading-[1.1] animate-fade-in" style={{ animationDelay: '0.1s' }}>
                 <span className="inline-block">استایل استریت</span>
                 <span className="block mt-2 text-gradient-shine">برای نسل جدید</span>
               </h1>
 
               {/* Subheading */}
-              <p className="text-xl md:text-2xl text-muted-foreground mb-12 max-w-xl mx-auto lg:mx-0 leading-relaxed animate-fade-in" style={{ animationDelay: '0.2s' }}>
-                هودی، شلوار و اکسسوری‌های اورجینال با کیفیت پرمیوم و طراحی منحصر به فرد
+              <p className="text-base sm:text-lg md:text-xl text-muted-foreground mb-8 md:mb-12 max-w-xl mx-auto lg:mx-0 leading-relaxed animate-fade-in" style={{ animationDelay: '0.2s' }}>
+                هودی، شلوار و اکسسوری‌های اورجینال با کیفیت پرمیوم
               </p>
               
               {/* CTAs */}
@@ -134,23 +134,12 @@ const Home = () => {
               </div>
             </div>
 
-            {/* 3D Brand Logo - Desktop only */}
+            {/* 3D Brand Logo - All Devices */}
             <div className="order-1 lg:order-2 flex items-center justify-center animate-scale-in">
               <div className="relative w-full max-w-lg mx-auto">
                 {/* Glow Effect Behind */}
                 <div className="absolute inset-0 bg-primary/20 rounded-full blur-[100px] scale-75" />
-                {isDesktop ? (
-                  <Hero3DText />
-                ) : (
-                  <div className="text-center py-12">
-                    <h2 className="text-5xl font-extrabold text-primary font-display tracking-tight">
-                      TM-BRAND
-                    </h2>
-                    <p className="text-muted-foreground text-sm mt-2">
-                      استریت‌ویر پرمیوم
-                    </p>
-                  </div>
-                )}
+                <Hero3DText />
               </div>
             </div>
           </div>

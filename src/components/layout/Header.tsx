@@ -64,7 +64,8 @@ export const Header = () => {
             {/* Logo */}
             <Link 
               to="/" 
-              className="group flex items-center gap-1"
+              className="group flex items-center"
+              dir="ltr"
             >
               <span className="text-2xl md:text-3xl font-extrabold text-primary transition-all duration-300 group-hover:text-primary/80 tracking-tight font-display">
                 TM
