@@ -98,7 +98,7 @@ const Home = () => {
               animationDelay: '0.1s'
             }}>
                 <span className="inline-block">استایل استریت</span>
-                <span className="block mt-2 text-gradient-shine text-right font-normal">برای نسل جدید</span>
+                <span className="block mt-2 text-gradient-shine text-right text-4xl font-bold">برای نسل جدید</span>
               </h1>
 
               {/* Subheading */}
