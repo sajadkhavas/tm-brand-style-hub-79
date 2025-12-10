@@ -1,17 +1,21 @@
-const AdminJS = require('adminjs');
-const AdminJSExpress = require('@adminjs/express');
-const AdminJSSequelize = require('@adminjs/sequelize');
 const bcrypt = require('bcryptjs');
 const session = require('express-session');
-const { User, Category, Product, BlogPost, Order, Address, Page, sequelize } = require('../models');
-
-// Register Sequelize adapter
-AdminJS.registerAdapter({
-  Resource: AdminJSSequelize.Resource,
-  Database: AdminJSSequelize.Database
-});
 
 async function setupAdmin(app) {
+  // Dynamic imports for ESM-only packages (AdminJS v7+)
+  const { default: AdminJS } = await import('adminjs');
+  const AdminJSExpress = await import('@adminjs/express');
+  const AdminJSSequelize = await import('@adminjs/sequelize');
+  
+  // Import models
+  const { User, Category, Product, BlogPost, Order, Address, Page, sequelize } = require('../models');
+
+  // Register Sequelize adapter
+  AdminJS.registerAdapter({
+    Resource: AdminJSSequelize.Resource,
+    Database: AdminJSSequelize.Database
+  });
+
   // AdminJS configuration
   const adminJs = new AdminJS({
     resources: [
@@ -169,7 +173,6 @@ async function setupAdmin(app) {
           actions: {
             new: {
               before: async (request) => {
-                // Auto-set publishedAt when publishing
                 if (request.payload?.status === 'published' && !request.payload?.publishedAt) {
                   request.payload.publishedAt = new Date();
                 }
@@ -178,7 +181,6 @@ async function setupAdmin(app) {
             },
             edit: {
               before: async (request) => {
-                // Auto-set publishedAt when publishing
                 if (request.payload?.status === 'published' && !request.payload?.publishedAt) {
                   request.payload.publishedAt = new Date();
                 }
