@@ -89,7 +89,7 @@ const Home = () => {
               <div className="inline-flex items-center gap-2 mb-8 animate-fade-in">
                 <Badge className="px-5 py-2 text-sm font-medium bg-primary/10 text-primary border border-primary/30 backdrop-blur-sm">
                   <Sparkles className="w-4 h-4 ml-2" />
-                  کلکسیون زمستان ۱۴۰۳
+                  کلکسیون زمستان 1404                   
                 </Badge>
               </div>
 
