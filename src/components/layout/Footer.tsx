@@ -53,7 +53,7 @@ export const Footer = () => {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-10 lg:gap-16">
           {/* Brand */}
           <div className="lg:col-span-1">
-            <Link to="/" className="inline-flex items-center gap-1 mb-6">
+            <Link to="/" className="inline-flex items-center mb-6" dir="ltr">
               <span className="text-3xl font-extrabold text-primary tracking-tight font-display">TM</span>
               <span className="text-2xl font-bold text-foreground font-display">-BRAND</span>
             </Link>
