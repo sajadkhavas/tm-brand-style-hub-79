@@ -14,14 +14,12 @@ import { useState, useRef } from 'react';
 import { useToast } from '@/hooks/use-toast';
 import { FloatingContactButton } from '@/components/layout/FloatingContactButton';
 import { useIsDesktop } from '@/hooks/useIsDesktop';
-
 import hoodieBlack from '@/assets/products/hoodie-black.png';
 import tshirtWhite from '@/assets/products/tshirt-white.png';
 import pantsCargo from '@/assets/products/pants-cargo.png';
 import jeansSlim from '@/assets/products/jeans-slim.png';
 import sneakersNeon from '@/assets/products/sneakers-neon.png';
 import capBlack from '@/assets/products/cap-black.png';
-
 const categoryImages: Record<string, string> = {
   hoodies: hoodieBlack,
   tshirts: tshirtWhite,
@@ -30,29 +28,26 @@ const categoryImages: Record<string, string> = {
   shoes: sneakersNeon,
   accessories: capBlack
 };
-
 const Home = () => {
   const [email, setEmail] = useState('');
   const heroRef = useRef<HTMLDivElement>(null);
-  const { toast } = useToast();
+  const {
+    toast
+  } = useToast();
   const isDesktop = useIsDesktop();
-  
   const newProducts = products.filter(p => p.isNew).slice(0, 4);
   const bestSellers = products.filter(p => p.isBestSeller).slice(0, 4);
-
   const handleWomenNotification = (e: React.FormEvent) => {
     e.preventDefault();
     if (email) {
       toast({
         title: "ثبت شد!",
-        description: "از اطلاع رسانی کلکسیون زنانه متشکریم",
+        description: "از اطلاع رسانی کلکسیون زنانه متشکریم"
       });
       setEmail('');
     }
   };
-
-  return (
-    <div className="min-h-screen overflow-hidden">
+  return <div className="min-h-screen overflow-hidden">
       <ScrollProgress />
       <FloatingContactButton />
       
@@ -65,7 +60,9 @@ const Home = () => {
           
           {/* Gradient Orbs */}
           <div className="absolute top-1/4 -left-32 w-96 h-96 bg-primary/20 rounded-full blur-[120px] animate-float morph-blob" />
-          <div className="absolute bottom-1/4 -right-32 w-[500px] h-[500px] bg-primary/15 rounded-full blur-[150px] animate-float" style={{ animationDelay: '-3s' }} />
+          <div className="absolute bottom-1/4 -right-32 w-[500px] h-[500px] bg-primary/15 rounded-full blur-[150px] animate-float" style={{
+          animationDelay: '-3s'
+        }} />
           <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] bg-gradient-radial opacity-50" />
           
           {/* Animated Lines */}
@@ -73,9 +70,15 @@ const Home = () => {
           <div className="absolute top-0 right-1/3 w-px h-full bg-gradient-to-b from-transparent via-primary/10 to-transparent" />
           
           {/* Floating particles */}
-          <div className="absolute top-20 left-20 w-2 h-2 bg-primary/40 rounded-full animate-float" style={{ animationDelay: '0s' }} />
-          <div className="absolute top-40 right-32 w-3 h-3 bg-primary/30 rounded-full animate-float" style={{ animationDelay: '1s' }} />
-          <div className="absolute bottom-40 left-1/3 w-2 h-2 bg-primary/50 rounded-full animate-float" style={{ animationDelay: '2s' }} />
+          <div className="absolute top-20 left-20 w-2 h-2 bg-primary/40 rounded-full animate-float" style={{
+          animationDelay: '0s'
+        }} />
+          <div className="absolute top-40 right-32 w-3 h-3 bg-primary/30 rounded-full animate-float" style={{
+          animationDelay: '1s'
+        }} />
+          <div className="absolute bottom-40 left-1/3 w-2 h-2 bg-primary/50 rounded-full animate-float" style={{
+          animationDelay: '2s'
+        }} />
         </div>
 
         <div className="container mx-auto px-4 relative z-10">
@@ -91,18 +94,24 @@ const Home = () => {
               </div>
 
               {/* Main Heading */}
-              <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-hero font-bold text-foreground mb-6 md:mb-8 leading-[1.1] animate-fade-in" style={{ animationDelay: '0.1s' }}>
+              <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-hero font-bold text-foreground mb-6 md:mb-8 leading-[1.1] animate-fade-in" style={{
+              animationDelay: '0.1s'
+            }}>
                 <span className="inline-block">استایل استریت</span>
-                <span className="block mt-2 text-gradient-shine">برای نسل جدید</span>
+                <span className="block mt-2 text-gradient-shine text-right font-normal">برای نسل جدید</span>
               </h1>
 
               {/* Subheading */}
-              <p className="text-base sm:text-lg md:text-xl text-muted-foreground mb-8 md:mb-12 max-w-xl mx-auto lg:mx-0 leading-relaxed animate-fade-in" style={{ animationDelay: '0.2s' }}>
+              <p className="text-base sm:text-lg md:text-xl text-muted-foreground mb-8 md:mb-12 max-w-xl mx-auto lg:mx-0 leading-relaxed animate-fade-in" style={{
+              animationDelay: '0.2s'
+            }}>
                 هودی، شلوار و اکسسوری‌های اورجینال با کیفیت پرمیوم
               </p>
               
               {/* CTAs */}
-              <div className="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start mb-16 animate-fade-in" style={{ animationDelay: '0.3s' }}>
+              <div className="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start mb-16 animate-fade-in" style={{
+              animationDelay: '0.3s'
+            }}>
                 <Button asChild size="lg" className="group text-lg px-10 h-16 rounded-2xl shadow-neon hover:shadow-neon-strong transition-all duration-500">
                   <Link to="/shop" className="flex items-center gap-3">
                     خرید محصولات
@@ -115,13 +124,22 @@ const Home = () => {
               </div>
 
               {/* Trust Badges */}
-              <div className="flex flex-wrap gap-6 justify-center lg:justify-start animate-fade-in" style={{ animationDelay: '0.4s' }}>
-                {[
-                  { icon: CheckCircle2, title: 'اورجینال', subtitle: '۱۰۰٪ اصل' },
-                  { icon: Truck, title: 'ارسال سریع', subtitle: '۲۴ ساعته' },
-                  { icon: RotateCcw, title: 'برگشت آسان', subtitle: '۷ روزه' },
-                ].map((item, index) => (
-                  <div key={index} className="flex items-center gap-4 group">
+              <div className="flex flex-wrap gap-6 justify-center lg:justify-start animate-fade-in" style={{
+              animationDelay: '0.4s'
+            }}>
+                {[{
+                icon: CheckCircle2,
+                title: 'اورجینال',
+                subtitle: '۱۰۰٪ اصل'
+              }, {
+                icon: Truck,
+                title: 'ارسال سریع',
+                subtitle: '۲۴ ساعته'
+              }, {
+                icon: RotateCcw,
+                title: 'برگشت آسان',
+                subtitle: '۷ روزه'
+              }].map((item, index) => <div key={index} className="flex items-center gap-4 group">
                     <div className="w-14 h-14 rounded-2xl bg-card/80 backdrop-blur-sm border border-border/50 flex items-center justify-center group-hover:border-primary/50 group-hover:bg-primary/10 transition-all duration-300">
                       <item.icon className="h-6 w-6 text-primary" />
                     </div>
@@ -129,8 +147,7 @@ const Home = () => {
                       <p className="font-semibold text-foreground">{item.title}</p>
                       <p className="text-sm text-muted-foreground">{item.subtitle}</p>
                     </div>
-                  </div>
-                ))}
+                  </div>)}
               </div>
             </div>
 
@@ -146,7 +163,9 @@ const Home = () => {
         </div>
 
         {/* Scroll Indicator */}
-        <div className="absolute bottom-8 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2 animate-fade-in" style={{ animationDelay: '1s' }}>
+        <div className="absolute bottom-8 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2 animate-fade-in" style={{
+        animationDelay: '1s'
+      }}>
           <span className="text-sm text-muted-foreground">اسکرول کنید</span>
           <div className="w-6 h-10 rounded-full border-2 border-muted-foreground/30 flex items-start justify-center p-2">
             <div className="w-1.5 h-3 bg-primary rounded-full animate-bounce" />
@@ -184,24 +203,13 @@ const Home = () => {
           </ScrollReveal>
           
           <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4 md:gap-6">
-            {categories.map((category, index) => (
-              <ScrollReveal 
-                key={category.id} 
-                animation="scale" 
-                delay={index * 100}
-                className="h-full"
-              >
+            {categories.map((category, index) => <ScrollReveal key={category.id} animation="scale" delay={index * 100} className="h-full">
                 <Link to={`/${category.id}`} className="block h-full">
                   <Card className="group relative overflow-hidden border-border/50 bg-card/50 backdrop-blur-sm hover:border-primary/50 transition-all duration-500 hover-lift h-full">
                     <div className="absolute inset-0 bg-gradient-to-t from-primary/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
                     <CardContent className="p-4 md:p-6 text-center relative z-10">
                       <div className="relative w-full aspect-square bg-muted/30 rounded-2xl mb-4 overflow-hidden">
-                        <img 
-                          src={categoryImages[category.id]} 
-                          alt={category.name}
-                          className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
-                          loading="lazy"
-                        />
+                        <img src={categoryImages[category.id]} alt={category.name} className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" loading="lazy" />
                         <div className="absolute inset-0 bg-gradient-to-t from-background/60 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
                       </div>
                       <h3 className="font-semibold text-foreground group-hover:text-primary transition-colors duration-300" dir="rtl">
@@ -211,8 +219,7 @@ const Home = () => {
                     </CardContent>
                   </Card>
                 </Link>
-              </ScrollReveal>
-            ))}
+              </ScrollReveal>)}
           </div>
         </div>
       </section>
@@ -223,13 +230,23 @@ const Home = () => {
         
         <div className="container mx-auto px-4 relative z-10">
           <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
-            {[
-              { value: '+۵۰۰۰', label: 'مشتری راضی', icon: Heart },
-              { value: '+۲۰۰', label: 'محصول متنوع', icon: Sparkles },
-              { value: '۹۸٪', label: 'رضایت مشتری', icon: TrendingUp },
-              { value: '۱۰۰٪', label: 'محصول اورجینال', icon: Shield },
-            ].map((stat, index) => (
-              <ScrollReveal key={index} animation="fade-up" delay={index * 150}>
+            {[{
+            value: '+۵۰۰۰',
+            label: 'مشتری راضی',
+            icon: Heart
+          }, {
+            value: '+۲۰۰',
+            label: 'محصول متنوع',
+            icon: Sparkles
+          }, {
+            value: '۹۸٪',
+            label: 'رضایت مشتری',
+            icon: TrendingUp
+          }, {
+            value: '۱۰۰٪',
+            label: 'محصول اورجینال',
+            icon: Shield
+          }].map((stat, index) => <ScrollReveal key={index} animation="fade-up" delay={index * 150}>
                 <div className="text-center group" dir="rtl">
                   <div className="w-16 h-16 mx-auto mb-4 rounded-2xl bg-primary/10 flex items-center justify-center group-hover:bg-primary/20 group-hover:scale-110 transition-all duration-500">
                     <stat.icon className="w-8 h-8 text-primary" />
@@ -237,8 +254,7 @@ const Home = () => {
                   <div className="text-4xl md:text-5xl font-bold text-gradient mb-2">{stat.value}</div>
                   <div className="text-muted-foreground">{stat.label}</div>
                 </div>
-              </ScrollReveal>
-            ))}
+              </ScrollReveal>)}
           </div>
         </div>
       </section>
@@ -268,11 +284,9 @@ const Home = () => {
           </ScrollReveal>
           
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-            {newProducts.map((product, index) => (
-              <ScrollReveal key={product.id} animation="fade-up" delay={index * 100}>
+            {newProducts.map((product, index) => <ScrollReveal key={product.id} animation="fade-up" delay={index * 100}>
                 <ProductCard product={product} />
-              </ScrollReveal>
-            ))}
+              </ScrollReveal>)}
           </div>
           <div className="mt-10 text-center md:hidden">
             <Button asChild variant="outline" className="w-full max-w-sm h-12 rounded-xl">
@@ -311,11 +325,9 @@ const Home = () => {
           </ScrollReveal>
           
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-            {bestSellers.map((product, index) => (
-              <ScrollReveal key={product.id} animation="scale" delay={index * 100}>
+            {bestSellers.map((product, index) => <ScrollReveal key={product.id} animation="scale" delay={index * 100}>
                 <ProductCard product={product} />
-              </ScrollReveal>
-            ))}
+              </ScrollReveal>)}
           </div>
           <div className="mt-10 text-center md:hidden">
             <Button asChild variant="outline" className="w-full max-w-sm h-12 rounded-xl">
@@ -352,12 +364,19 @@ const Home = () => {
             
             {/* Value Cards */}
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-16">
-              {[
-                { icon: CheckCircle2, title: 'اصالت', desc: 'محصولات ۱۰۰٪ اورجینال' },
-                { icon: Sparkles, title: 'کیفیت', desc: 'بهترین مواد و ساخت' },
-                { icon: Star, title: 'استایل', desc: 'طراحی‌های منحصر به فرد' },
-              ].map((item, index) => (
-                <ScrollReveal key={index} animation="fade-up" delay={index * 150}>
+              {[{
+              icon: CheckCircle2,
+              title: 'اصالت',
+              desc: 'محصولات ۱۰۰٪ اورجینال'
+            }, {
+              icon: Sparkles,
+              title: 'کیفیت',
+              desc: 'بهترین مواد و ساخت'
+            }, {
+              icon: Star,
+              title: 'استایل',
+              desc: 'طراحی‌های منحصر به فرد'
+            }].map((item, index) => <ScrollReveal key={index} animation="fade-up" delay={index * 150}>
                   <Card className="group relative overflow-hidden border-border/50 bg-card/50 backdrop-blur-sm hover:border-primary/50 transition-all duration-500">
                     <div className="absolute inset-0 bg-gradient-to-t from-primary/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
                     <CardContent className="p-8 text-center relative z-10">
@@ -368,8 +387,7 @@ const Home = () => {
                       <p className="text-muted-foreground">{item.desc}</p>
                     </CardContent>
                   </Card>
-                </ScrollReveal>
-              ))}
+                </ScrollReveal>)}
             </div>
 
             <ScrollReveal animation="fade-up" delay={500}>
@@ -408,15 +426,7 @@ const Home = () => {
                   برای اطلاع از زمان عرضه، ایمیل خود را ثبت کنید.
                 </p>
                 <form onSubmit={handleWomenNotification} className="flex flex-col sm:flex-row gap-4 max-w-md mx-auto">
-                  <Input
-                    type="email"
-                    placeholder="ایمیل شما"
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
-                    required
-                    className="flex-1 h-14 rounded-xl bg-background/50 border-border/50 focus:border-primary"
-                    dir="rtl"
-                  />
+                  <Input type="email" placeholder="ایمیل شما" value={email} onChange={e => setEmail(e.target.value)} required className="flex-1 h-14 rounded-xl bg-background/50 border-border/50 focus:border-primary" dir="rtl" />
                   <Button type="submit" size="lg" className="h-14 px-8 rounded-xl">
                     ثبت اطلاعات
                   </Button>
@@ -426,8 +436,6 @@ const Home = () => {
           </ScrollReveal>
         </div>
       </section>
-    </div>
-  );
+    </div>;
 };
-
 export default Home;
