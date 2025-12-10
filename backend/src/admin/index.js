@@ -3,7 +3,7 @@ const AdminJSExpress = require('@adminjs/express');
 const AdminJSSequelize = require('@adminjs/sequelize');
 const bcrypt = require('bcryptjs');
 const session = require('express-session');
-const { User, Category, Product, BlogPost, Order, Address, sequelize } = require('../models');
+const { User, Category, Product, BlogPost, Order, Address, Page, sequelize } = require('../models');
 
 // Register Sequelize adapter
 AdminJS.registerAdapter({
@@ -129,6 +129,63 @@ async function setupAdmin(app) {
           navigation: { name: 'مدیریت کاربران', icon: 'MapPin' },
           listProperties: ['title', 'province', 'city', 'isDefault', 'userId'],
           editProperties: ['title', 'province', 'city', 'address', 'postalCode', 'isDefault', 'userId']
+        }
+      },
+      // Pages Resource (CMS)
+      {
+        resource: Page,
+        options: {
+          navigation: { name: 'مدیریت محتوا', icon: 'Document' },
+          listProperties: ['title', 'slug', 'status', 'publishedAt', 'createdAt'],
+          editProperties: ['title', 'slug', 'content', 'excerpt', 'status', 'publishedAt', 'metaTitle', 'metaDescription'],
+          showProperties: ['id', 'title', 'slug', 'content', 'excerpt', 'status', 'publishedAt', 'metaTitle', 'metaDescription', 'createdAt', 'updatedAt'],
+          filterProperties: ['title', 'slug', 'status', 'createdAt', 'publishedAt'],
+          properties: {
+            content: { 
+              type: 'richtext',
+              props: {
+                rows: 20
+              }
+            },
+            excerpt: { 
+              type: 'textarea',
+              props: {
+                rows: 3
+              }
+            },
+            metaDescription: {
+              type: 'textarea',
+              props: {
+                rows: 2
+              }
+            },
+            status: {
+              availableValues: [
+                { value: 'draft', label: 'پیش‌نویس' },
+                { value: 'published', label: 'منتشر شده' }
+              ]
+            }
+          },
+          actions: {
+            new: {
+              before: async (request) => {
+                // Auto-set publishedAt when publishing
+                if (request.payload?.status === 'published' && !request.payload?.publishedAt) {
+                  request.payload.publishedAt = new Date();
+                }
+                return request;
+              }
+            },
+            edit: {
+              before: async (request) => {
+                // Auto-set publishedAt when publishing
+                if (request.payload?.status === 'published' && !request.payload?.publishedAt) {
+                  request.payload.publishedAt = new Date();
+                }
+                return request;
+              }
+            }
+          }
         }
       }
     ],

@@ -329,6 +329,67 @@ const Address = sequelize.define('Address', {
   tableName: 'addresses'
 });
 
+// ==================== PAGE MODEL (CMS) ====================
+const Page = sequelize.define('Page', {
+  id: {
+    type: DataTypes.UUID,
+    defaultValue: DataTypes.UUIDV4,
+    primaryKey: true
+  },
+  title: {
+    type: DataTypes.STRING,
+    allowNull: false
+  },
+  slug: {
+    type: DataTypes.STRING,
+    unique: true,
+    allowNull: false
+  },
+  content: {
+    type: DataTypes.TEXT,
+    allowNull: true
+  },
+  excerpt: {
+    type: DataTypes.STRING(500),
+    allowNull: true
+  },
+  status: {
+    type: DataTypes.ENUM('draft', 'published'),
+    defaultValue: 'draft'
+  },
+  publishedAt: {
+    type: DataTypes.DATE,
+    allowNull: true
+  },
+  metaTitle: {
+    type: DataTypes.STRING,
+    allowNull: true
+  },
+  metaDescription: {
+    type: DataTypes.STRING(500),
+    allowNull: true
+  }
+}, {
+  tableName: 'pages',
+  hooks: {
+    beforeValidate: (page) => {
+      // Auto-generate slug from title if not provided
+      if (!page.slug && page.title) {
+        page.slug = page.title
+          .toLowerCase()
+          .replace(/[^\w\s-]/g, '')
+          .replace(/\s+/g, '-')
+          .replace(/-+/g, '-')
+          .trim();
+      }
+      // Set publishedAt when status changes to published
+      if (page.status === 'published' && !page.publishedAt) {
+        page.publishedAt = new Date();
+      }
+    }
+  }
+});
+
 // ==================== RELATIONSHIPS ====================
 
 // Product belongs to Category
@@ -354,5 +415,6 @@ module.exports = {
   Product,
   BlogPost,
   Order,
-  Address
+  Address,
+  Page
 };
