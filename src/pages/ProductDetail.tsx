@@ -24,7 +24,7 @@ const ProductDetail = () => {
   });
   const { data: relatedProducts } = useQuery<Product[]>({
     queryKey: ['related', product?.categoryId || product?.category],
-    queryFn: () => getProducts({ categoryId: product?.categoryId || product?.category }),
+    queryFn: () => getProducts({ category: product?.categoryId || product?.category }),
     enabled: Boolean(product)
   });
   const relatedList = relatedProducts || [];
