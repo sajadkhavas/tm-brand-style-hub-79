@@ -13,6 +13,7 @@ const blogRoutes = require('./routes/blog');
 const orderRoutes = require('./routes/orders');
 const uploadRoutes = require('./routes/upload');
 const pageRoutes = require('./routes/pages');
+const contactRoutes = require('./routes/contact');
 
 const app = express();
 const PORT = process.env.PORT || 3001;
@@ -44,6 +45,7 @@ app.use('/api/blog', blogRoutes);
 app.use('/api/orders', orderRoutes);
 app.use('/api/upload', uploadRoutes);
 app.use('/api/pages', pageRoutes);
+app.use('/api/contact', contactRoutes);
 
 // Health Check
 app.get('/api/health', (req, res) => {

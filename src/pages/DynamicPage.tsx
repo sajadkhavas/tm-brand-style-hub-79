@@ -2,22 +2,24 @@
  * Dynamic CMS Page Component
  * Renders any page from AdminJS Pages resource
  */
-import { useParams } from 'react-router-dom';
+import { useParams, useLocation, Link } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
-import { Helmet } from 'react-helmet-async';
 import { getPageBySlug } from '@/api/pages';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Button } from '@/components/ui/button';
-import { Link } from 'react-router-dom';
 import { FileQuestion } from 'lucide-react';
 
 const DynamicPage = () => {
   const { slug } = useParams<{ slug: string }>();
+  const location = useLocation();
+  
+  // Get slug from params or from path (for routes like /terms, /privacy)
+  const pageSlug = slug || location.pathname.replace('/', '');
   
   const { data: page, isLoading, error } = useQuery({
-    queryKey: ['page', slug],
-    queryFn: () => getPageBySlug(slug || ''),
-    enabled: Boolean(slug),
+    queryKey: ['page', pageSlug],
+    queryFn: () => getPageBySlug(pageSlug),
+    enabled: Boolean(pageSlug),
   });
 
   if (isLoading) {
@@ -58,53 +60,44 @@ const DynamicPage = () => {
   }
 
   return (
-    <>
-      <Helmet>
-        <title>{page.metaTitle || page.title} | TM-BRAND</title>
-        {page.metaDescription && (
-          <meta name="description" content={page.metaDescription} />
-        )}
-      </Helmet>
-
-      <div className="min-h-screen" dir="rtl">
-        {/* Hero Section */}
-        <section className="relative py-20 md:py-32 overflow-hidden">
-          <div className="absolute inset-0 opacity-10">
-            <div className="absolute top-0 left-0 w-96 h-96 bg-primary rounded-full blur-3xl" />
-            <div className="absolute bottom-0 right-0 w-96 h-96 bg-primary rounded-full blur-3xl" />
+    <div className="min-h-screen" dir="rtl">
+      {/* Hero Section */}
+      <section className="relative py-20 md:py-32 overflow-hidden">
+        <div className="absolute inset-0 opacity-10">
+          <div className="absolute top-0 left-0 w-96 h-96 bg-primary rounded-full blur-3xl" />
+          <div className="absolute bottom-0 right-0 w-96 h-96 bg-primary rounded-full blur-3xl" />
+        </div>
+        
+        <div className="container mx-auto px-4 relative z-10">
+          <div className="max-w-3xl mx-auto text-center">
+            <h1 className="text-4xl md:text-5xl font-bold text-foreground mb-6 leading-tight">
+              {page.title}
+            </h1>
+            {page.excerpt && (
+              <p className="text-xl text-muted-foreground leading-relaxed">
+                {page.excerpt}
+              </p>
+            )}
           </div>
-          
-          <div className="container mx-auto px-4 relative z-10">
-            <div className="max-w-3xl mx-auto text-center">
-              <h1 className="text-4xl md:text-5xl font-bold text-foreground mb-6 leading-tight">
-                {page.title}
-              </h1>
-              {page.excerpt && (
-                <p className="text-xl text-muted-foreground leading-relaxed">
-                  {page.excerpt}
-                </p>
-              )}
-            </div>
-          </div>
-        </section>
+        </div>
+      </section>
 
-        {/* Decorative Divider */}
-        <div className="h-px bg-gradient-to-r from-transparent via-border to-transparent" />
+      {/* Decorative Divider */}
+      <div className="h-px bg-gradient-to-r from-transparent via-border to-transparent" />
 
-        {/* Content Section */}
-        <section className="py-16 md:py-24">
-          <div className="container mx-auto px-4">
-            <div className="max-w-4xl mx-auto">
-              {/* Render HTML content from CMS */}
-              <div 
-                className="prose prose-lg max-w-none prose-headings:text-foreground prose-p:text-muted-foreground prose-strong:text-foreground prose-a:text-primary hover:prose-a:text-primary/80"
-                dangerouslySetInnerHTML={{ __html: page.content || '' }}
-              />
-            </div>
+      {/* Content Section */}
+      <section className="py-16 md:py-24">
+        <div className="container mx-auto px-4">
+          <div className="max-w-4xl mx-auto">
+            {/* Render HTML content from CMS */}
+            <div 
+              className="prose prose-lg max-w-none prose-headings:text-foreground prose-p:text-muted-foreground prose-strong:text-foreground prose-a:text-primary hover:prose-a:text-primary/80 prose-li:text-muted-foreground prose-ul:text-muted-foreground"
+              dangerouslySetInnerHTML={{ __html: page.content || '' }}
+            />
           </div>
-        </section>
-      </div>
-    </>
+        </div>
+      </section>
+    </div>
   );
 };
 
