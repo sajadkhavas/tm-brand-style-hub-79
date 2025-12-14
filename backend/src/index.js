@@ -24,6 +24,8 @@ const corsOptions = {
   origin: [
     process.env.FRONTEND_URL || 'http://localhost:5173',
     process.env.PRODUCTION_FRONTEND_URL || 'https://tm-brand.com',
+    'https://www.tm-brand.com',
+    'http://45.149.78.122',
     'http://localhost:8080'
   ],
   credentials: true,
