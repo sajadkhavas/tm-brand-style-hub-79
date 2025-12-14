@@ -31,37 +31,9 @@ const corsOptions = {
 };
 
 app.use(cors(corsOptions));
-app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
 
 // Static files for uploads
 app.use('/uploads', express.static(path.join(__dirname, '../uploads')));
-
-// API Routes
-app.use('/api/auth', authRoutes);
-app.use('/api/products', productRoutes);
-app.use('/api/categories', categoryRoutes);
-app.use('/api/blog', blogRoutes);
-app.use('/api/orders', orderRoutes);
-app.use('/api/upload', uploadRoutes);
-app.use('/api/pages', pageRoutes);
-app.use('/api/contact', contactRoutes);
-
-// Health Check
-app.get('/api/health', (req, res) => {
-  res.json({ status: 'ok', timestamp: new Date().toISOString() });
-});
-
-// Error handling middleware
-app.use((err, req, res, next) => {
-  console.error('Error:', err);
-  res.status(err.status || 500).json({
-    error: {
-      message: err.message || 'Internal Server Error',
-      status: err.status || 500
-    }
-  });
-});
 
 // Initialize database and start server
 async function startServer() {
@@ -78,6 +50,36 @@ async function startServer() {
 
     // Setup AdminJS
     await setupAdmin(app);
+
+    // Body parsers must be registered after AdminJS to avoid router conflicts
+    app.use(express.json());
+    app.use(express.urlencoded({ extended: true }));
+
+    // API Routes
+    app.use('/api/auth', authRoutes);
+    app.use('/api/products', productRoutes);
+    app.use('/api/categories', categoryRoutes);
+    app.use('/api/blog', blogRoutes);
+    app.use('/api/orders', orderRoutes);
+    app.use('/api/upload', uploadRoutes);
+    app.use('/api/pages', pageRoutes);
+    app.use('/api/contact', contactRoutes);
+
+    // Health Check
+    app.get('/api/health', (req, res) => {
+      res.json({ status: 'ok', timestamp: new Date().toISOString() });
+    });
+
+    // Error handling middleware
+    app.use((err, req, res, next) => {
+      console.error('Error:', err);
+      res.status(err.status || 500).json({
+        error: {
+          message: err.message || 'Internal Server Error',
+          status: err.status || 500
+        }
+      });
+    });
 
     app.listen(PORT, () => {
       console.log(`🚀 Server running on http://localhost:${PORT}`);
