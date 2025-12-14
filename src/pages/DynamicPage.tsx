@@ -4,23 +4,34 @@
  */
 import { useParams, useLocation, Link } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
+import { Helmet } from 'react-helmet-async';
 import { getPageBySlug } from '@/api/pages';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Button } from '@/components/ui/button';
 import { FileQuestion } from 'lucide-react';
 
-const DynamicPage = () => {
+type DynamicPageProps = {
+  defaultSlug?: string;
+};
+
+const DynamicPage = ({ defaultSlug }: DynamicPageProps) => {
   const { slug } = useParams<{ slug: string }>();
   const location = useLocation();
-  
+
   // Get slug from params or from path (for routes like /terms, /privacy)
-  const pageSlug = slug || location.pathname.replace('/', '');
+  const pageSlug = slug || defaultSlug || location.pathname.replace('/', '');
   
   const { data: page, isLoading, error } = useQuery({
     queryKey: ['page', pageSlug],
     queryFn: () => getPageBySlug(pageSlug),
     enabled: Boolean(pageSlug),
   });
+
+  const pageTitle = page?.metaTitle || page?.title || 'TM-BRAND';
+  const pageDescription = page?.metaDescription || page?.excerpt || '';
+  const canonicalUrl = page?.slug && typeof window !== 'undefined'
+    ? `${window.location.origin}/page/${page.slug}`
+    : undefined;
 
   if (isLoading) {
     return (
@@ -61,13 +72,19 @@ const DynamicPage = () => {
 
   return (
     <div className="min-h-screen" dir="rtl">
+      <Helmet>
+        <title>{pageTitle}</title>
+        {pageDescription && <meta name="description" content={pageDescription} />}
+        {canonicalUrl && <link rel="canonical" href={canonicalUrl} />}
+      </Helmet>
+
       {/* Hero Section */}
       <section className="relative py-20 md:py-32 overflow-hidden">
         <div className="absolute inset-0 opacity-10">
           <div className="absolute top-0 left-0 w-96 h-96 bg-primary rounded-full blur-3xl" />
           <div className="absolute bottom-0 right-0 w-96 h-96 bg-primary rounded-full blur-3xl" />
         </div>
-        
+
         <div className="container mx-auto px-4 relative z-10">
           <div className="max-w-3xl mx-auto text-center">
             <h1 className="text-4xl md:text-5xl font-bold text-foreground mb-6 leading-tight">
@@ -90,7 +107,7 @@ const DynamicPage = () => {
         <div className="container mx-auto px-4">
           <div className="max-w-4xl mx-auto">
             {/* Render HTML content from CMS */}
-            <div 
+            <div
               className="prose prose-lg max-w-none prose-headings:text-foreground prose-p:text-muted-foreground prose-strong:text-foreground prose-a:text-primary hover:prose-a:text-primary/80 prose-li:text-muted-foreground prose-ul:text-muted-foreground"
               dangerouslySetInnerHTML={{ __html: page.content || '' }}
             />

@@ -4,6 +4,71 @@
 
 ---
 
+## 📦 دیپلوی روی VPS با اکسپرس و AdminJS
+
+- **IP فعلی سرور:** `45.149.78.122`
+- **دامنه آینده:** `tm-brand.com`
+- **پورت API/AdminJS:** `3001`
+- **فولدر فرانت‌اند:** `/var/www/tm-brand/frontend`
+- **فولدر آپلودها:** `/var/www/tm-brand/backend/uploads`
+
+### پیکربندی Nginx (نمونه)
+
+```nginx
+server {
+    listen 80;
+    server_name tm-brand.com www.tm-brand.com;
+
+    root /var/www/tm-brand/frontend;
+    index index.html;
+
+    location / {
+        try_files $uri /index.html;
+    }
+
+    location /api {
+        proxy_pass http://localhost:3001/api;
+        proxy_http_version 1.1;
+        proxy_set_header Upgrade $http_upgrade;
+        proxy_set_header Connection 'upgrade';
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+    }
+
+    location /admin {
+        proxy_pass http://localhost:3001/admin;
+        proxy_http_version 1.1;
+        proxy_set_header Upgrade $http_upgrade;
+        proxy_set_header Connection 'upgrade';
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+    }
+
+    location /uploads/ {
+        alias /var/www/tm-brand/backend/uploads/;
+        access_log off;
+        expires max;
+    }
+}
+```
+
+### اجرای بک‌اند با PM2
+
+```bash
+# داخل پوشه backend و پس از ساخت فایل .env
+pm2 start src/index.js --name tm-brand-api
+pm2 save
+pm2 startup
+```
+
+> فرانت‌اند Vite را Build کنید و خروجی `dist/` را در مسیر `/var/www/tm-brand/frontend` کپی کنید.
+
+---
+
 ## 📋 معماری پروژه
 
 ```
