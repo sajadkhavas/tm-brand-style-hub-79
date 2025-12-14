@@ -11,7 +11,22 @@ import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/
 import { Skeleton } from '@/components/ui/skeleton';
 import { submitContactForm } from '@/api/contact';
 import { getPageBySlug } from '@/api/pages';
-import { Instagram, Send, Phone, Mail, MapPin, MessageCircle, Clock, CheckCircle2, Sparkles } from 'lucide-react';
+import { Instagram, Send, Phone, Mail, MapPin, MessageCircle, Clock, CheckCircle2 } from 'lucide-react';
+import DynamicPage from './DynamicPage';
+
+const iconMap: Record<string, ComponentType> = {
+  phone: Phone,
+  mail: Mail,
+  email: Mail,
+  map: MapPin,
+  location: MapPin,
+  whatsapp: MessageCircle,
+  instagram: Instagram,
+  clock: Clock,
+  check: CheckCircle2,
+  send: Send,
+  message: MessageCircle
+};
 
 const Contact = () => {
   const [formData, setFormData] = useState({
@@ -24,38 +39,24 @@ const Contact = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const { toast } = useToast();
 
-  const { data: page, isLoading } = useQuery({
+  const { data: page, isLoading, error } = useQuery({
     queryKey: ['page', 'contact'],
     queryFn: () => getPageBySlug('contact')
   });
 
-  const structuredContent = useMemo(() => {
+  const structured = useMemo(() => {
     if (!page?.content) return null;
     try {
       return JSON.parse(page.content);
-    } catch (error) {
-      console.warn('Contact page content is not JSON; rendering as HTML.', error);
+    } catch (err) {
       return null;
     }
   }, [page]);
 
-  const contactMethods = structuredContent?.contactMethods || [];
-  const faqs = structuredContent?.faqs || [];
-  const additionalHtml = !structuredContent ? page?.content : structuredContent?.html;
-
-  const iconMap: Record<string, ComponentType> = {
-    phone: Phone,
-    mail: Mail,
-    email: Mail,
-    map: MapPin,
-    location: MapPin,
-    whatsapp: MessageCircle,
-    instagram: Instagram,
-    clock: Clock,
-    check: CheckCircle2,
-    send: Send,
-    message: MessageCircle
-  };
+  const contactMethods = structured?.contactMethods || [];
+  const faqs = structured?.faqs || [];
+  const heroSubtitle = structured?.hero?.subtitle;
+  const extraHtml = structured?.html || (!structured ? page?.content : '');
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -65,35 +66,56 @@ const Contact = () => {
 
     if (success) {
       toast({
-        title: "پیام ارسال شد",
-        description: "به زودی با شما تماس خواهیم گرفت",
+        title: 'پیام ارسال شد',
+        description: 'به زودی با شما تماس خواهیم گرفت'
       });
       setFormData({ name: '', email: '', phone: '', subject: '', message: '' });
     } else {
       toast({
         variant: 'destructive',
         title: 'خطا در ارسال پیام',
-        description: 'لطفاً دوباره تلاش کنید',
+        description: 'لطفاً دوباره تلاش کنید'
       });
     }
 
     setIsSubmitting(false);
   };
 
+  if (error) {
+    return <DynamicPage defaultSlug="contact" />;
+  }
+
   return (
     <div className="min-h-screen" dir="rtl">
       <Helmet>
-        <title>{page?.metaTitle || page?.title || 'تماس با TM-BRAND'}</title>
+        <title>{page?.metaTitle || page?.title || 'TM-BRAND'}</title>
         {page?.metaDescription && <meta name="description" content={page.metaDescription} />}
       </Helmet>
 
-      {isLoading ? (
-        <div className="container mx-auto px-4 py-20 space-y-8">
-          <Skeleton className="h-12 w-1/2 mx-auto" />
-          <Skeleton className="h-6 w-2/3 mx-auto" />
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <Skeleton className="h-80" />
-            <Skeleton className="h-80" />
+      <section className="relative py-16 md:py-24 overflow-hidden">
+        <div className="absolute inset-0 opacity-10">
+          <div className="absolute top-0 left-0 w-96 h-96 bg-primary rounded-full blur-3xl" />
+          <div className="absolute bottom-0 right-0 w-96 h-96 bg-primary rounded-full blur-3xl" />
+        </div>
+        <div className="container mx-auto px-4 relative z-10">
+          <div className="max-w-3xl mx-auto text-center space-y-4">
+            {isLoading ? (
+              <>
+                <Skeleton className="h-12 w-2/3 mx-auto" />
+                <Skeleton className="h-4 w-full mx-auto" />
+              </>
+            ) : (
+              <>
+                <h1 className="text-4xl md:text-5xl font-bold text-foreground leading-tight">
+                  {page?.title}
+                </h1>
+                {(page?.excerpt || heroSubtitle) && (
+                  <p className="text-lg text-muted-foreground leading-relaxed">
+                    {heroSubtitle || page?.excerpt}
+                  </p>
+                )}
+              </>
+            )}
           </div>
         </div>
       ) : (
@@ -104,195 +126,171 @@ const Contact = () => {
               <div className="absolute top-0 right-0 w-96 h-96 bg-primary rounded-full blur-3xl" />
             </div>
 
-            <div className="container mx-auto px-4 relative z-10">
-              <div className="max-w-2xl mx-auto text-center">
-                <div className="inline-flex items-center gap-2 bg-primary/10 text-primary px-4 py-2 rounded-full mb-6">
-                  <MessageCircle className="h-4 w-4" />
-                  <span className="text-sm font-medium">ارتباط با ما</span>
-                </div>
-                <h1 className="text-4xl md:text-5xl font-bold text-foreground mb-4">
-                  {page?.title || 'سوالات خود را با ما مطرح کنید'}
-                </h1>
-                <p className="text-xl text-muted-foreground">
-                  {page?.excerpt || 'تیم پشتیبانی TM-BRAND آماده پاسخگویی به شماست.'}
-                </p>
+      <div className="h-px bg-gradient-to-r from-transparent via-border to-transparent" />
+
+      <section className="py-12 md:py-20">
+        <div className="container mx-auto px-4 grid lg:grid-cols-2 gap-10">
+          <Card className="border-primary/30 bg-card/80 backdrop-blur">
+            <CardContent className="p-6 md:p-8 space-y-6">
+              <div>
+                <h2 className="text-2xl font-bold mb-2">فرم تماس</h2>
+                <p className="text-muted-foreground">پیام خود را برای ما ارسال کنید</p>
               </div>
-            </div>
-          </section>
 
-          {/* Decorative Divider */}
-          <div className="h-px bg-gradient-to-r from-transparent via-border to-transparent" />
+              <form onSubmit={handleSubmit} className="space-y-4" dir="rtl">
+                <div className="grid md:grid-cols-2 gap-4">
+                  <div className="space-y-2">
+                    <Label htmlFor="name">نام و نام خانوادگی</Label>
+                    <Input
+                      id="name"
+                      required
+                      value={formData.name}
+                      onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                      placeholder="نام کامل"
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="email">ایمیل</Label>
+                    <Input
+                      id="email"
+                      type="email"
+                      required
+                      value={formData.email}
+                      onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+                      placeholder="you@example.com"
+                    />
+                  </div>
+                </div>
 
-          {/* Contact Methods */}
-          {contactMethods.length > 0 && (
-            <section className="py-12 bg-dark-surface">
-              <div className="container mx-auto px-4">
-                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-                  {contactMethods.map((method: any, index: number) => {
-                    const Icon = iconMap[method.icon as string] || Send;
+                <div className="grid md:grid-cols-2 gap-4">
+                  <div className="space-y-2">
+                    <Label htmlFor="phone">شماره تماس</Label>
+                    <Input
+                      id="phone"
+                      value={formData.phone}
+                      onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
+                      placeholder="0912xxx"
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="subject">موضوع</Label>
+                    <Input
+                      id="subject"
+                      required
+                      value={formData.subject}
+                      onChange={(e) => setFormData({ ...formData, subject: e.target.value })}
+                      placeholder="موضوع پیام"
+                    />
+                  </div>
+                </div>
 
+                <div className="space-y-2">
+                  <Label htmlFor="message">پیام</Label>
+                  <Textarea
+                    id="message"
+                    required
+                    rows={5}
+                    value={formData.message}
+                    onChange={(e) => setFormData({ ...formData, message: e.target.value })}
+                    placeholder="پیام خود را بنویسید"
+                  />
+                </div>
+
+                <Button type="submit" size="lg" className="w-full" disabled={isSubmitting}>
+                  {isSubmitting ? 'در حال ارسال...' : 'ارسال پیام'}
+                </Button>
+              </form>
+            </CardContent>
+          </Card>
+
+          <div className="space-y-8">
+            <Card>
+              <CardContent className="p-6 space-y-4">
+                <div>
+                  <h3 className="text-xl font-bold">راه‌های ارتباطی</h3>
+                  <p className="text-muted-foreground">اطلاعات تماس ثبت‌شده در پنل مدیریت</p>
+                </div>
+
+                {isLoading && (
+                  <div className="space-y-3">
+                    {Array.from({ length: 3 }).map((_, idx) => (
+                      <Skeleton key={idx} className="h-14 w-full" />
+                    ))}
+                  </div>
+                )}
+
+                {!isLoading && contactMethods.length === 0 && (
+                  <p className="text-muted-foreground">اطلاعات تماس هنوز در پنل ثبت نشده است.</p>
+                )}
+
+                <div className="space-y-3">
+                  {contactMethods.map((method, index) => {
+                    const Icon = iconMap[method.icon?.toLowerCase?.() || 'message'] || MessageCircle;
                     return (
-                      <a
-                        key={`${method.title}-${index}`}
-                        href={method.href}
-                        target={method.href?.startsWith('http') ? '_blank' : undefined}
-                        rel="noopener noreferrer"
-                        className="block"
+                      <div
+                        key={`${method.label}-${index}`}
+                        className="flex items-center justify-between gap-4 p-3 border rounded-xl"
                       >
-                        <Card className="h-full hover:border-primary/50 transition-all duration-300 group">
-                          <CardContent className="p-4 md:p-6 text-center">
-                            <div className="w-12 h-12 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-3 group-hover:bg-primary/20 group-hover:scale-110 transition-all duration-300">
-                              <Icon className="h-6 w-6 text-primary" />
-                            </div>
-                            <h3 className="font-semibold text-foreground mb-1">{method.title}</h3>
-                            <p className="text-primary font-medium text-sm mb-1">{method.value}</p>
-                            {method.description && (
-                              <p className="text-xs text-muted-foreground">{method.description}</p>
-                            )}
-                          </CardContent>
-                        </Card>
-                      </a>
+                        <div className="flex items-center gap-3">
+                          <span className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center">
+                            <Icon className="h-5 w-5 text-primary" />
+                          </span>
+                          <div>
+                            <p className="font-medium">{method.label}</p>
+                            <p className="text-sm text-muted-foreground break-words">{method.value}</p>
+                          </div>
+                        </div>
+                        {method.link && (
+                          <a
+                            href={method.link}
+                            target="_blank"
+                            rel="noreferrer"
+                            className="text-sm text-primary hover:text-primary/80"
+                          >
+                            ارتباط
+                          </a>
+                        )}
+                      </div>
                     );
                   })}
                 </div>
-              </div>
-            </section>
-          )}
+              </CardContent>
+            </Card>
 
-          {/* Decorative Divider */}
-          <div className="h-px bg-gradient-to-r from-transparent via-border to-transparent" />
-
-          {/* Main Content */}
-          <section className="py-16">
-            <div className="container mx-auto px-4">
-              <div className="grid lg:grid-cols-2 gap-8 lg:gap-12">
-                {/* Contact Form */}
-                <Card className="border-border/50">
-                  <CardContent className="p-6 md:p-8">
-                    <div className="mb-6">
-                      <div className="inline-flex items-center gap-2 bg-primary/10 text-primary px-3 py-1.5 rounded-full mb-3">
-                        <Send className="h-3.5 w-3.5" />
-                        <span className="text-xs font-medium">فرم تماس</span>
-                      </div>
-                      <h2 className="text-2xl font-bold text-foreground mb-2">پیام خود را بنویسید</h2>
-                      <p className="text-muted-foreground text-sm">ما در اسرع وقت پاسخ می‌دهیم</p>
-                    </div>
-
-                    <form onSubmit={handleSubmit} className="space-y-4">
-                      <div className="grid sm:grid-cols-2 gap-4">
-                        <div className="space-y-2">
-                          <Label htmlFor="name">نام و نام خانوادگی *</Label>
-                          <Input
-                            id="name"
-                            value={formData.name}
-                            onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                            required
-                            placeholder="نام شما"
-                            className="transition-all duration-200 focus:ring-2 focus:ring-primary/20"
-                          />
-                        </div>
-                        <div className="space-y-2">
-                          <Label htmlFor="phone">شماره تماس *</Label>
-                          <Input
-                            id="phone"
-                            type="tel"
-                            value={formData.phone}
-                            onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
-                            required
-                            placeholder="۰۹۱۲۳۴۵۶۷۸۹"
-                            className="transition-all duration-200 focus:ring-2 focus:ring-primary/20"
-                          />
-                        </div>
-                      </div>
-
-                      <div className="space-y-2">
-                        <Label htmlFor="email">ایمیل</Label>
-                        <Input
-                          id="email"
-                          type="email"
-                          value={formData.email}
-                          onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                          placeholder="you@example.com"
-                          className="transition-all duration-200 focus:ring-2 focus:ring-primary/20"
-                        />
-                      </div>
-
-                      <div className="space-y-2">
-                        <Label htmlFor="subject">موضوع پیام *</Label>
-                        <Input
-                          id="subject"
-                          value={formData.subject}
-                          onChange={(e) => setFormData({ ...formData, subject: e.target.value })}
-                          required
-                          placeholder="موضوع"
-                          className="transition-all duration-200 focus:ring-2 focus:ring-primary/20"
-                        />
-                      </div>
-
-                      <div className="space-y-2">
-                        <Label htmlFor="message">متن پیام *</Label>
-                        <Textarea
-                          id="message"
-                          value={formData.message}
-                          onChange={(e) => setFormData({ ...formData, message: e.target.value })}
-                          required
-                          placeholder="پیام خود را اینجا بنویسید"
-                          className="min-h-[140px] transition-all duration-200 focus:ring-2 focus:ring-primary/20"
-                        />
-                      </div>
-
-                      <Button type="submit" className="w-full" size="lg" disabled={isSubmitting}>
-                        {isSubmitting ? 'در حال ارسال...' : 'ارسال پیام'}
-                      </Button>
-                    </form>
-                  </CardContent>
-                </Card>
-
-                {/* FAQ */}
-                {faqs.length > 0 && (
-                  <div className="space-y-6">
-                    <div>
-                      <div className="inline-flex items-center gap-2 bg-primary/10 text-primary px-3 py-1.5 rounded-full mb-3">
-                        <Sparkles className="h-3.5 w-3.5" />
-                        <span className="text-xs font-medium">سوالات پرتکرار</span>
-                      </div>
-                      <h2 className="text-2xl font-bold text-foreground mb-2">هر آنچه باید بدانید</h2>
-                      {page?.excerpt && (
-                        <p className="text-muted-foreground text-sm">{page.excerpt}</p>
-                      )}
-                    </div>
-
-                    <Accordion type="single" collapsible className="space-y-4">
-                      {faqs.map((faq: any, index: number) => (
-                        <AccordionItem key={index} value={`faq-${index}`} className="border border-border rounded-xl px-4">
-                          <AccordionTrigger className="text-right text-base font-semibold text-foreground">
-                            {faq.question}
-                          </AccordionTrigger>
-                          <AccordionContent className="text-right text-muted-foreground">
-                            {faq.answer}
-                          </AccordionContent>
-                        </AccordionItem>
-                      ))}
-                    </Accordion>
+            {faqs.length > 0 && (
+              <Card>
+                <CardContent className="p-6 space-y-4">
+                  <div>
+                    <h3 className="text-xl font-bold">سؤالات متداول</h3>
+                    <p className="text-muted-foreground">پاسخ‌های ثبت‌شده در پنل</p>
                   </div>
-                )}
-              </div>
-            </div>
-          </section>
+                  <Accordion type="single" collapsible className="w-full space-y-2">
+                    {faqs.map((item: any, index: number) => (
+                      <AccordionItem key={index} value={`faq-${index}`}>
+                        <AccordionTrigger className="text-right">{item.question}</AccordionTrigger>
+                        <AccordionContent className="text-right text-muted-foreground">
+                          {item.answer}
+                        </AccordionContent>
+                      </AccordionItem>
+                    ))}
+                  </Accordion>
+                </CardContent>
+              </Card>
+            )}
 
-          {/* Additional CMS content */}
-          {additionalHtml && (
-            <section className="py-12">
-              <div className="container mx-auto px-4">
-                <div
-                  className="prose prose-lg max-w-none prose-headings:text-foreground prose-p:text-muted-foreground prose-strong:text-foreground prose-a:text-primary"
-                  dangerouslySetInnerHTML={{ __html: additionalHtml }}
-                />
-              </div>
-            </section>
-          )}
-        </>
-      )}
+            {extraHtml && (
+              <Card>
+                <CardContent className="p-6">
+                  <div
+                    className="prose prose-lg max-w-none prose-headings:text-foreground prose-p:text-muted-foreground prose-a:text-primary"
+                    dangerouslySetInnerHTML={{ __html: extraHtml }}
+                  />
+                </CardContent>
+              </Card>
+            )}
+          </div>
+        </div>
+      </section>
     </div>
   );
 };

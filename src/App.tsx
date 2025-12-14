@@ -18,6 +18,7 @@ import BlogPost from "./pages/BlogPost";
 import CategoryPage from "./pages/CategoryPage";
 import DynamicPage from "./pages/DynamicPage";
 import NotFound from "./pages/NotFound";
+import About from "./pages/About";
 
 const queryClient = new QueryClient({
   defaultOptions: {
