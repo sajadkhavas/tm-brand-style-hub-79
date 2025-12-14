@@ -1,3 +1,6 @@
+/* Import premium fonts */
+@import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&display=swap');
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -8,9 +11,6 @@
    All colors MUST be HSL format.
    Use semantic tokens - never hardcode colors in components.
    ======================================== */
-
-/* Import premium fonts */
-@import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&display=swap');
 
 @layer base {
   :root {
