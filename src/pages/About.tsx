@@ -1,7 +1,5 @@
 import DynamicPage from './DynamicPage';
 
-const About = () => {
-  return <DynamicPage defaultSlug="about" />;
-};
+const About = () => <DynamicPage defaultSlug="about-us" />;
 
 export default About;

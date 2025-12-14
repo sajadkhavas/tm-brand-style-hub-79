@@ -41,7 +41,7 @@ app.use('/uploads', express.static(path.join(__dirname, '../uploads')));
 async function seedDefaultPages() {
   const defaults = [
     {
-      slug: 'about',
+      slug: 'about-us',
       title: 'درباره TM-BRAND',
       excerpt: 'برند پرمیوم استریت‌ویر و اسپرت برای نسل مدرن ایران',
       content:
@@ -50,7 +50,7 @@ async function seedDefaultPages() {
       metaDescription: 'آشنایی با برند استریت‌ویر TM-BRAND و مأموریت ما برای ارائه کیفیت پرمیوم.'
     },
     {
-      slug: 'contact',
+      slug: 'contact-us',
       title: 'تماس با TM-BRAND',
       excerpt: 'از طریق فرم تماس با ما در ارتباط باشید',
       content:
@@ -134,15 +134,15 @@ async function startServer() {
       console.log('✅ Database models synced');
     }
 
-    // Setup AdminJS
+    // Setup AdminJS first
     await setupAdmin(app);
 
     // Seed default CMS pages for first-time deployments
     await seedDefaultPages();
 
     // Body parsers must be registered after AdminJS to avoid router conflicts
-    app.use(express.json());
-    app.use(express.urlencoded({ extended: true }));
+    app.use(express.json({ limit: '10mb' }));
+    app.use(express.urlencoded({ extended: true, limit: '10mb' }));
 
     // API Routes
     app.use('/api/auth', authRoutes);

@@ -248,18 +248,18 @@ async function setupAdmin(app) {
     {
       authenticate,
       cookieName: 'adminjs',
-      cookiePassword: process.env.JWT_SECRET || 'super-secret-session-key'
+      cookiePassword: process.env.JWT_SECRET || 'super-secret-key'
     },
     null,
     {
       store: new session.MemoryStore(),
       resave: false,
       saveUninitialized: false,
-      secret: process.env.JWT_SECRET || 'super-secret-session-key',
+      secret: process.env.JWT_SECRET || 'super-secret-key',
       cookie: {
         httpOnly: true,
-        secure: false,
-        maxAge: 1000 * 60 * 60 * 24 // 24 hours session for admin panel
+        secure: false, // HTTP-friendly for server IP
+        maxAge: 24 * 60 * 60 * 1000
       }
     }
   );
