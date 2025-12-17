@@ -102,7 +102,7 @@ export const getHomeSettings = async (): Promise<HomeSettings> => {
  * Get about page content
  */
 export const getAboutContent = async () => {
-  const page = await getPageBySlug('about');
+  const page = await getPageBySlug('about-us');
   return page;
 };
 
@@ -110,6 +110,6 @@ export const getAboutContent = async () => {
  * Get contact page content
  */
 export const getContactContent = async () => {
-  const page = await getPageBySlug('contact');
+  const page = await getPageBySlug('contact-us');
   return page;
 };

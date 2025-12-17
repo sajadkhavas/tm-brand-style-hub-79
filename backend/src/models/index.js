@@ -118,7 +118,15 @@ const Product = sequelize.define('Product', {
     type: DataTypes.INTEGER,
     defaultValue: 0
   },
+  order: {
+    type: DataTypes.INTEGER,
+    defaultValue: 0
+  },
   images: {
+    type: DataTypes.JSONB,
+    defaultValue: []
+  },
+  variants: {
     type: DataTypes.JSONB,
     defaultValue: []
   },
@@ -348,6 +356,10 @@ const Page = sequelize.define('Page', {
   content: {
     type: DataTypes.TEXT,
     allowNull: true
+  },
+  images: {
+    type: DataTypes.JSONB,
+    defaultValue: []
   },
   excerpt: {
     type: DataTypes.STRING(500),

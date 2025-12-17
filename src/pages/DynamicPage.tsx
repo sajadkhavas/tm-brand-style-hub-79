@@ -18,9 +18,10 @@ type DynamicPageProps = {
 
 const DynamicPage = ({ defaultSlug }: DynamicPageProps) => {
   const { slug } = useParams<{ slug: string }>();
+  const location = useLocation();
 
-  // Get slug from params or use default slug prop
-  const pageSlug = slug || defaultSlug;
+  // Get slug from params or from path (for routes like /terms, /privacy)
+  const pageSlug = slug || defaultSlug || location.pathname.replace('/', '');
   
   const { data: page, isLoading, error } = useQuery({
     queryKey: ['page', pageSlug],

@@ -2,6 +2,7 @@ require('dotenv').config();
 const express = require('express');
 const cors = require('cors');
 const path = require('path');
+const morgan = require('morgan');
 const { sequelize } = require('./database/connection');
 const { Page } = require('./models');
 const setupAdmin = require('./admin');
@@ -18,49 +19,32 @@ const contactRoutes = require('./routes/contact');
 
 const app = express();
 const PORT = process.env.PORT || 3001;
+app.set('trust proxy', 1);
 
 // CORS Configuration - Allow all origins for development, specific origins for production
 const corsOptions = {
-  origin: function (origin, callback) {
-    // Allow requests with no origin (mobile apps, curl, etc.)
-    if (!origin) return callback(null, true);
-    
-    // Allow all Lovable preview domains
-    if (origin.includes('lovable.app') || origin.includes('lovableproject.com')) {
-      return callback(null, true);
-    }
-    
-    // Allow specific production domains
-    const allowedOrigins = [
-      process.env.FRONTEND_URL || 'http://localhost:5173',
-      process.env.PRODUCTION_FRONTEND_URL || 'https://tm-brand.com',
-      'https://www.tm-brand.com',
-      'http://45.149.78.122',
-      'http://localhost:8080',
-      'http://localhost:3000',
-      'http://localhost:5173'
-    ];
-    
-    if (allowedOrigins.includes(origin)) {
-      return callback(null, true);
-    }
-    
-    // For development, allow all origins
-    if (process.env.NODE_ENV === 'development') {
-      return callback(null, true);
-    }
-    
-    callback(new Error('Not allowed by CORS'));
-  },
+  origin: [
+    process.env.FRONTEND_URL || 'http://localhost:5173',
+    process.env.PRODUCTION_FRONTEND_URL || 'https://tm-brand.com',
+    'http://tm-brand.com',
+    'https://tm-brand.com',
+    'http://www.tm-brand.com',
+    'https://www.tm-brand.com',
+    'http://45.149.78.122',
+    'http://localhost:8080'
+  ],
   credentials: true,
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
   allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With']
 };
 
 app.use(cors(corsOptions));
+app.options('*', cors(corsOptions));
+app.use(morgan('combined'));
 
 // Static files for uploads
-app.use('/uploads', express.static(path.join(__dirname, '../uploads')));
+const uploadsPath = path.resolve(process.env.FILE_UPLOAD_PATH || path.join(__dirname, '../uploads'));
+app.use('/uploads', express.static(uploadsPath));
 
 async function seedDefaultPages() {
   const defaults = [
