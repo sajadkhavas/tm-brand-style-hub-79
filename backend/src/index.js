@@ -21,7 +21,7 @@ const app = express();
 const PORT = process.env.PORT || 3001;
 app.set('trust proxy', 1);
 
-// CORS Configuration
+// CORS Configuration - Allow all origins for development, specific origins for production
 const corsOptions = {
   origin: [
     process.env.FRONTEND_URL || 'http://localhost:5173',
@@ -35,7 +35,7 @@ const corsOptions = {
   ],
   credentials: true,
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
-  allowedHeaders: ['Content-Type', 'Authorization']
+  allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With']
 };
 
 app.use(cors(corsOptions));

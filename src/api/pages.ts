@@ -1,5 +1,6 @@
 /**
  * Pages API - CMS Pages managed via AdminJS
+ * Note: Paths do NOT include /api prefix as VITE_API_URL already includes it
  */
 import { apiClient, ApiResponse } from './client';
 
@@ -22,7 +23,8 @@ export interface Page {
  */
 export const getPages = async (): Promise<Page[]> => {
   try {
-    const response = await apiClient.get<ApiResponse<Page[]>>('/api/pages');
+    // Note: NO /api prefix - VITE_API_URL already includes it
+    const response = await apiClient.get<ApiResponse<Page[]>>('/pages');
     return response.data;
   } catch (error) {
     console.error('Failed to fetch pages:', error);
@@ -35,7 +37,7 @@ export const getPages = async (): Promise<Page[]> => {
  */
 export const getPageBySlug = async (slug: string): Promise<Page | null> => {
   try {
-    const response = await apiClient.get<ApiResponse<Page>>(`/api/pages/${slug}`);
+    const response = await apiClient.get<ApiResponse<Page>>(`/pages/${slug}`);
     return response.data;
   } catch (error) {
     console.error(`Failed to fetch page ${slug}:`, error);

@@ -2,8 +2,7 @@
  * Settings API - Fetch site settings from backend
  * Homepage settings, hero content, etc.
  */
-import { apiClient, ApiResponse } from './client';
-import { getPageBySlug, Page } from './pages';
+import { getPageBySlug } from './pages';
 
 export interface HeroSettings {
   badge: string;

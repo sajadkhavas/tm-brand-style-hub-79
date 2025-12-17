@@ -1,14 +1,16 @@
 /**
  * Dynamic CMS Page Component
  * Renders any page from AdminJS Pages resource
+ * All static pages (about, contact, terms, privacy, shipping, faq) 
+ * are fetched dynamically from the backend API
  */
-import { useParams, useLocation, Link } from 'react-router-dom';
+import { useParams, Link } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import { Helmet } from 'react-helmet-async';
 import { getPageBySlug } from '@/api/pages';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Button } from '@/components/ui/button';
-import { FileQuestion } from 'lucide-react';
+import { FileQuestion, ArrowRight } from 'lucide-react';
 
 type DynamicPageProps = {
   defaultSlug?: string;
@@ -54,16 +56,21 @@ const DynamicPage = ({ defaultSlug }: DynamicPageProps) => {
   if (error || !page) {
     return (
       <div className="min-h-screen flex items-center justify-center" dir="rtl">
-        <div className="text-center space-y-6">
+        <div className="text-center space-y-6 px-4">
           <div className="w-24 h-24 bg-muted/30 rounded-3xl flex items-center justify-center mx-auto">
             <FileQuestion className="h-12 w-12 text-muted-foreground" />
           </div>
           <div>
             <h1 className="text-2xl font-bold text-foreground mb-2">صفحه یافت نشد</h1>
-            <p className="text-muted-foreground mb-6">متأسفانه صفحه مورد نظر شما پیدا نشد</p>
+            <p className="text-muted-foreground mb-6">
+              متأسفانه صفحه «{pageSlug}» پیدا نشد. ممکن است هنوز در پنل مدیریت ایجاد نشده باشد.
+            </p>
           </div>
           <Button asChild>
-            <Link to="/">بازگشت به صفحه اصلی</Link>
+            <Link to="/" className="flex items-center gap-2">
+              <ArrowRight className="h-4 w-4" />
+              بازگشت به صفحه اصلی
+            </Link>
           </Button>
         </div>
       </div>

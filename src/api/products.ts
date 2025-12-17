@@ -1,5 +1,6 @@
 /**
  * Products API - Fetches from Node.js backend managed via AdminJS
+ * Note: Paths do NOT include /api prefix as VITE_API_URL already includes it
  */
 import { Product, Category } from '@/types';
 import { apiClient, ApiResponse } from './client';
@@ -61,6 +62,7 @@ interface BackendCategory {
   slug: string;
   description?: string;
   image?: string;
+  icon?: string;
   isActive: boolean;
   order: number;
 }
@@ -97,11 +99,12 @@ const transformProduct = (item: BackendProduct): Product => ({
 /**
  * Transform backend category to frontend Category type
  */
-const transformCategory = (item: BackendCategory): Category => ({
+const transformCategory = (item: BackendCategory): Category & { icon?: string } => ({
   id: item.id,
   slug: item.slug,
   name: item.name,
   description: item.description,
+  icon: item.icon,
 });
 
 /**
@@ -125,7 +128,8 @@ export const getProducts = async (params?: ProductQueryParams): Promise<Product[
     if (params?.limit) queryParams.set('limit', params.limit.toString());
 
     const query = queryParams.toString();
-    const path = query ? `/api/products?${query}` : '/api/products';
+    // Note: NO /api prefix - VITE_API_URL already includes it
+    const path = query ? `/products?${query}` : '/products';
     
     const response = await apiClient.get<ApiResponse<BackendProduct[]>>(path);
     return (response.data || []).map(transformProduct);
@@ -140,7 +144,7 @@ export const getProducts = async (params?: ProductQueryParams): Promise<Product[
  */
 export const getProductBySlug = async (slug: string): Promise<Product | undefined> => {
   try {
-    const response = await apiClient.get<ApiResponse<BackendProduct>>(`/api/products/${slug}`);
+    const response = await apiClient.get<ApiResponse<BackendProduct>>(`/products/${slug}`);
     return response.data ? transformProduct(response.data) : undefined;
   } catch (error) {
     console.error(`Failed to fetch product ${slug}:`, error);
@@ -153,7 +157,7 @@ export const getProductBySlug = async (slug: string): Promise<Product | undefine
  */
 export const getFeaturedProducts = async (): Promise<Product[]> => {
   try {
-    const response = await apiClient.get<ApiResponse<BackendProduct[]>>('/api/products/featured');
+    const response = await apiClient.get<ApiResponse<BackendProduct[]>>('/products/featured');
     return (response.data || []).map(transformProduct);
   } catch (error) {
     console.error('Failed to fetch featured products:', error);
@@ -180,7 +184,7 @@ export const getBestsellerProducts = async (): Promise<Product[]> => {
  */
 export const getCategories = async (): Promise<Category[]> => {
   try {
-    const response = await apiClient.get<ApiResponse<BackendCategory[]>>('/api/categories');
+    const response = await apiClient.get<ApiResponse<BackendCategory[]>>('/categories');
     return (response.data || []).map(transformCategory);
   } catch (error) {
     console.error('Failed to fetch categories:', error);
@@ -193,7 +197,7 @@ export const getCategories = async (): Promise<Category[]> => {
  */
 export const getCategoryBySlug = async (slug: string): Promise<Category | undefined> => {
   try {
-    const response = await apiClient.get<ApiResponse<BackendCategory>>(`/api/categories/${slug}`);
+    const response = await apiClient.get<ApiResponse<BackendCategory>>(`/categories/${slug}`);
     return response.data ? transformCategory(response.data) : undefined;
   } catch (error) {
     console.error(`Failed to fetch category ${slug}:`, error);
