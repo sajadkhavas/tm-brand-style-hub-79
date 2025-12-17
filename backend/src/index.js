@@ -19,18 +19,42 @@ const contactRoutes = require('./routes/contact');
 const app = express();
 const PORT = process.env.PORT || 3001;
 
-// CORS Configuration
+// CORS Configuration - Allow all origins for development, specific origins for production
 const corsOptions = {
-  origin: [
-    process.env.FRONTEND_URL || 'http://localhost:5173',
-    process.env.PRODUCTION_FRONTEND_URL || 'https://tm-brand.com',
-    'https://www.tm-brand.com',
-    'http://45.149.78.122',
-    'http://localhost:8080'
-  ],
+  origin: function (origin, callback) {
+    // Allow requests with no origin (mobile apps, curl, etc.)
+    if (!origin) return callback(null, true);
+    
+    // Allow all Lovable preview domains
+    if (origin.includes('lovable.app') || origin.includes('lovableproject.com')) {
+      return callback(null, true);
+    }
+    
+    // Allow specific production domains
+    const allowedOrigins = [
+      process.env.FRONTEND_URL || 'http://localhost:5173',
+      process.env.PRODUCTION_FRONTEND_URL || 'https://tm-brand.com',
+      'https://www.tm-brand.com',
+      'http://45.149.78.122',
+      'http://localhost:8080',
+      'http://localhost:3000',
+      'http://localhost:5173'
+    ];
+    
+    if (allowedOrigins.includes(origin)) {
+      return callback(null, true);
+    }
+    
+    // For development, allow all origins
+    if (process.env.NODE_ENV === 'development') {
+      return callback(null, true);
+    }
+    
+    callback(new Error('Not allowed by CORS'));
+  },
   credentials: true,
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
-  allowedHeaders: ['Content-Type', 'Authorization']
+  allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With']
 };
 
 app.use(cors(corsOptions));
