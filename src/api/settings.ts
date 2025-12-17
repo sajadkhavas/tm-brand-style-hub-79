@@ -2,8 +2,7 @@
  * Settings API - Fetch site settings from backend
  * Homepage settings, hero content, etc.
  */
-import { apiClient, ApiResponse } from './client';
-import { getPageBySlug, Page } from './pages';
+import { getPageBySlug } from './pages';
 
 export interface HeroSettings {
   badge: string;
@@ -103,7 +102,7 @@ export const getHomeSettings = async (): Promise<HomeSettings> => {
  * Get about page content
  */
 export const getAboutContent = async () => {
-  const page = await getPageBySlug('about-us');
+  const page = await getPageBySlug('about');
   return page;
 };
 
@@ -111,6 +110,6 @@ export const getAboutContent = async () => {
  * Get contact page content
  */
 export const getContactContent = async () => {
-  const page = await getPageBySlug('contact-us');
+  const page = await getPageBySlug('contact');
   return page;
 };
