@@ -5,11 +5,46 @@ const { User, Category, Product, BlogPost, Page } = require('../models');
 const slugify = require('slugify');
 
 const categories = [
-  { name: 'هودی', nameEn: 'Hoodie', slug: 'hoodie', description: 'هودی‌های استایل استریت‌ویر' },
-  { name: 'تیشرت', nameEn: 'T-Shirt', slug: 'tshirt', description: 'تیشرت‌های کژوال و راحت' },
-  { name: 'شلوار', nameEn: 'Pants', slug: 'pants', description: 'شلوارهای کارگو و جین' },
-  { name: 'کفش', nameEn: 'Shoes', slug: 'shoes', description: 'کتانی و کفش‌های اسپرت' },
-  { name: 'کلاه', nameEn: 'Cap', slug: 'cap', description: 'کلاه‌های بیسبالی و بکت' }
+  {
+    name: 'هودی',
+    nameEn: 'Hoodie',
+    slug: 'hoodie',
+    description: 'هودی‌های استریت‌ویر پریمیوم با داخل کرکی و فیت اورسایز',
+    image: '/uploads/categories/hoodie-placeholder.webp',
+    order: 1
+  },
+  {
+    name: 'تیشرت',
+    nameEn: 'T-Shirt',
+    slug: 'tshirt',
+    description: 'تیشرت‌های نخی وزن بالا با چاپ اختصاصی TM-BRAND',
+    image: '/uploads/categories/tshirt-placeholder.webp',
+    order: 2
+  },
+  {
+    name: 'شلوار',
+    nameEn: 'Pants',
+    slug: 'pants',
+    description: 'شلوارهای کارگو، جین و پارچه‌ای برای استایل خیابانی',
+    image: '/uploads/categories/pants-placeholder.webp',
+    order: 3
+  },
+  {
+    name: 'کفش',
+    nameEn: 'Shoes',
+    slug: 'shoes',
+    description: 'کتانی و بوت‌های سبک خیابانی و رانینگ',
+    image: '/uploads/categories/shoes-placeholder.webp',
+    order: 4
+  },
+  {
+    name: 'کلاه',
+    nameEn: 'Cap',
+    slug: 'cap',
+    description: 'کلاه‌های بیسبالی، اسنپ‌بک و بکت با لوگوی TM-BRAND',
+    image: '/uploads/categories/cap-placeholder.webp',
+    order: 5
+  }
 ];
 
 const products = [
@@ -32,7 +67,13 @@ const products = [
     isFeatured: true,
     gender: 'unisex',
     material: 'پنبه 100٪',
-    categorySlug: 'hoodie'
+    categorySlug: 'hoodie',
+    order: 1,
+    variants: [
+      { sku: 'TMH-BLK-S', size: 'S', color: 'مشکی', stock: 8 },
+      { sku: 'TMH-BLK-M', size: 'M', color: 'مشکی', stock: 12 },
+      { sku: 'TMH-BLK-L', size: 'L', color: 'مشکی', stock: 10 }
+    ]
   },
   {
     name: 'تیشرت سفید کلاسیک',
@@ -50,7 +91,13 @@ const products = [
     isFeatured: true,
     gender: 'unisex',
     material: 'پنبه سوپیما',
-    categorySlug: 'tshirt'
+    categorySlug: 'tshirt',
+    order: 2,
+    variants: [
+      { sku: 'TMS-WHT-M', size: 'M', color: 'سفید', stock: 30 },
+      { sku: 'TMS-WHT-L', size: 'L', color: 'سفید', stock: 40 },
+      { sku: 'TMS-WHT-XL', size: 'XL', color: 'سفید', stock: 30 }
+    ]
   },
   {
     name: 'شلوار کارگو خاکی',
@@ -67,7 +114,13 @@ const products = [
     isNew: true,
     gender: 'men',
     material: 'کتان',
-    categorySlug: 'pants'
+    categorySlug: 'pants',
+    order: 3,
+    variants: [
+      { sku: 'TM-PNT-32', size: '32', color: 'خاکی', stock: 8 },
+      { sku: 'TM-PNT-34', size: '34', color: 'خاکی', stock: 7 },
+      { sku: 'TM-PNT-36', size: '36', color: 'خاکی', stock: 6 }
+    ]
   },
   {
     name: 'کتانی نئون',
@@ -86,7 +139,13 @@ const products = [
     isFeatured: true,
     gender: 'unisex',
     material: 'مش و چرم مصنوعی',
-    categorySlug: 'shoes'
+    categorySlug: 'shoes',
+    order: 4,
+    variants: [
+      { sku: 'TM-SNK-42', size: '42', color: 'نئون', stock: 3 },
+      { sku: 'TM-SNK-43', size: '43', color: 'نئون', stock: 3 },
+      { sku: 'TM-SNK-44', size: '44', color: 'نئون', stock: 2 }
+    ]
   },
   {
     name: 'کلاه مشکی لوگو',
@@ -101,7 +160,11 @@ const products = [
     stock: 80,
     stockStatus: 'inStock',
     gender: 'unisex',
-    categorySlug: 'cap'
+    categorySlug: 'cap',
+    order: 5,
+    variants: [
+      { sku: 'TM-CAP-01', size: 'Free', color: 'مشکی', stock: 50 }
+    ]
   },
   {
     name: 'جین اسلیم فیت',
@@ -118,7 +181,13 @@ const products = [
     isBestseller: true,
     gender: 'men',
     material: 'دنیم استرچ',
-    categorySlug: 'pants'
+    categorySlug: 'pants',
+    order: 6,
+    variants: [
+      { sku: 'TM-JNS-32', size: '32', color: 'آبی تیره', stock: 12 },
+      { sku: 'TM-JNS-34', size: '34', color: 'آبی تیره', stock: 10 },
+      { sku: 'TM-JNS-36', size: '36', color: 'آبی تیره', stock: 8 }
+    ]
   }
 ];
 
@@ -148,7 +217,7 @@ const blogPosts = [
 const pages = [
   {
     title: 'درباره ما',
-    slug: 'about',
+    slug: 'about-us',
     excerpt: 'درباره TM-BRAND و داستان ما',
     content: `<h2>داستان TM-BRAND</h2>
 <p>TM-BRAND در سال ۱۳۹۸ با هدف ارائه پوشاک استریت‌ویر با کیفیت و طراحی منحصر به فرد تاسیس شد.</p>
@@ -164,11 +233,12 @@ const pages = [
     status: 'published',
     publishedAt: new Date(),
     metaTitle: 'درباره ما | TM-BRAND',
-    metaDescription: 'با TM-BRAND آشنا شوید - برند پوشاک استریت‌ویر ایرانی با کیفیت بالا و طراحی منحصر به فرد'
+    metaDescription: 'با TM-BRAND آشنا شوید - برند پوشاک استریت‌ویر ایرانی با کیفیت بالا و طراحی منحصر به فرد',
+    images: ['/uploads/pages/about-hero.webp']
   },
   {
     title: 'تماس با ما',
-    slug: 'contact',
+    slug: 'contact-us',
     excerpt: 'راه‌های ارتباط با TM-BRAND',
     content: `<h2>با ما در تماس باشید</h2>
 <p>سوالی دارید؟ ما اینجاییم تا کمکتان کنیم.</p>
@@ -185,7 +255,8 @@ const pages = [
     status: 'published',
     publishedAt: new Date(),
     metaTitle: 'تماس با ما | TM-BRAND',
-    metaDescription: 'با TM-BRAND تماس بگیرید - پشتیبانی، سفارشات و سوالات'
+    metaDescription: 'با TM-BRAND تماس بگیرید - پشتیبانی، سفارشات و سوالات',
+    images: ['/uploads/pages/contact-hero.webp']
   },
   {
     title: 'سوالات متداول',
@@ -209,7 +280,8 @@ const pages = [
     status: 'published',
     publishedAt: new Date(),
     metaTitle: 'سوالات متداول | TM-BRAND',
-    metaDescription: 'پاسخ به سوالات متداول درباره خرید، ارسال و مرجوعی محصولات TM-BRAND'
+    metaDescription: 'پاسخ به سوالات متداول درباره خرید، ارسال و مرجوعی محصولات TM-BRAND',
+    images: ['/uploads/pages/faq-hero.webp']
   },
   {
     title: 'قوانین و مقررات',
@@ -224,7 +296,42 @@ const pages = [
     status: 'published',
     publishedAt: new Date(),
     metaTitle: 'قوانین و مقررات | TM-BRAND',
-    metaDescription: 'شرایط استفاده و قوانین فروشگاه TM-BRAND'
+    metaDescription: 'شرایط استفاده و قوانین فروشگاه TM-BRAND',
+    images: ['/uploads/pages/terms-hero.webp']
+  },
+  {
+    title: 'حریم خصوصی',
+    slug: 'privacy',
+    excerpt: 'نحوه جمع‌آوری و نگهداری داده‌های کاربران',
+    content: `<h2>سیاست حریم خصوصی</h2>
+<p>TM-BRAND اطلاعات شخصی شما را تنها برای پردازش سفارش و بهبود تجربه کاربری استفاده می‌کند.</p>
+<h3>اطلاعات جمع‌آوری‌شده</h3>
+<p>نام، ایمیل، شماره تماس، آدرس و تاریخچه سفارش‌ها.</p>
+<h3>امنیت داده</h3>
+<p>تمامی داده‌ها روی سرورهای ایمن نگهداری و از رمزنگاری در زمان انتقال استفاده می‌شود.</p>`,
+    status: 'published',
+    publishedAt: new Date(),
+    metaTitle: 'حریم خصوصی | TM-BRAND',
+    metaDescription: 'سیاست حریم خصوصی و امنیت داده‌های مشتریان TM-BRAND',
+    images: ['/uploads/pages/privacy-hero.webp']
+  },
+  {
+    title: 'ارسال و تحویل',
+    slug: 'shipping',
+    excerpt: 'شرایط و زمان‌بندی ارسال سفارش‌ها',
+    content: `<h2>ارسال و تحویل</h2>
+<p>ارسال سفارش‌ها بین ۲ تا ۵ روز کاری انجام می‌شود. سفارش‌های بالای ۲ میلیون تومان رایگان ارسال می‌شوند.</p>
+<h3>روش‌های ارسال</h3>
+<ul>
+<li>پیک ویژه تهران</li>
+<li>پست پیشتاز برای شهرستان‌ها</li>
+<li>امکان تحویل حضوری با هماهنگی قبلی</li>
+</ul>`,
+    status: 'published',
+    publishedAt: new Date(),
+    metaTitle: 'ارسال و تحویل | TM-BRAND',
+    metaDescription: 'جزئیات ارسال، هزینه و زمان‌بندی تحویل سفارش‌های TM-BRAND',
+    images: ['/uploads/pages/shipping-hero.webp']
   }
 ];
 

@@ -9,11 +9,12 @@ const { verifyToken, adminOnly } = require('../middleware/auth');
 const router = express.Router();
 
 // Ensure upload directory exists
-const uploadDir = path.join(__dirname, '../../uploads');
+const uploadDir = path.resolve(process.env.FILE_UPLOAD_PATH || path.join(__dirname, '../../uploads'));
 const productsDir = path.join(uploadDir, 'products');
 const blogDir = path.join(uploadDir, 'blog');
+const pagesDir = path.join(uploadDir, 'pages');
 
-[uploadDir, productsDir, blogDir].forEach(dir => {
+[uploadDir, productsDir, blogDir, pagesDir].forEach(dir => {
   if (!fs.existsSync(dir)) {
     fs.mkdirSync(dir, { recursive: true });
   }
@@ -39,7 +40,7 @@ const upload = multer({
   }
 });
 
-// Upload product image
+// Upload product image (single)
 router.post('/product', verifyToken, adminOnly, upload.single('image'), async (req, res) => {
   try {
     if (!req.file) {
@@ -94,6 +95,41 @@ router.post('/blog', verifyToken, adminOnly, upload.single('image'), async (req,
   } catch (error) {
     console.error('Upload error:', error);
     res.status(500).json({ error: 'Failed to upload image' });
+  }
+});
+
+// Multi-upload endpoint for AdminJS rich text/images
+router.post('/multiple', verifyToken, adminOnly, upload.array('images', 10), async (req, res) => {
+  try {
+    if (!req.files || req.files.length === 0) {
+      return res.status(400).json({ error: 'No files uploaded' });
+    }
+
+    const target = req.query.type || 'products';
+    const targetDir = path.join(uploadDir, target);
+    if (!fs.existsSync(targetDir)) {
+      fs.mkdirSync(targetDir, { recursive: true });
+    }
+
+    const results = [];
+    for (const file of req.files) {
+      const filename = `${uuidv4()}.webp`;
+      const filepath = path.join(targetDir, filename);
+      await sharp(file.buffer)
+        .resize(1600, 1600, { fit: 'inside', withoutEnlargement: true })
+        .webp({ quality: 85 })
+        .toFile(filepath);
+
+      results.push({
+        url: `/uploads/${target}/${filename}`,
+        filename,
+      });
+    }
+
+    res.json({ files: results });
+  } catch (error) {
+    console.error('Multi-upload error:', error);
+    res.status(500).json({ error: 'Failed to upload files' });
   }
 });
 

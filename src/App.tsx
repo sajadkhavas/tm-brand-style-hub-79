@@ -12,13 +12,13 @@ import Shop from "./pages/Shop";
 import ProductDetail from "./pages/ProductDetail";
 import Cart from "./pages/Cart";
 import Checkout from "./pages/Checkout";
-import About from "./pages/About";
 import Contact from "./pages/Contact";
 import Blog from "./pages/Blog";
 import BlogPost from "./pages/BlogPost";
 import CategoryPage from "./pages/CategoryPage";
 import DynamicPage from "./pages/DynamicPage";
 import NotFound from "./pages/NotFound";
+import About from "./pages/About";
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -60,10 +60,10 @@ const App = () => (
                   <Route path="/shoes" element={<CategoryPage />} />
                   <Route path="/accessories" element={<CategoryPage />} />
                   {/* CMS Dynamic Pages */}
-                  <Route path="/terms" element={<DynamicPage />} />
-                  <Route path="/privacy" element={<DynamicPage />} />
-                  <Route path="/shipping" element={<DynamicPage />} />
-                  <Route path="/faq" element={<DynamicPage />} />
+                  <Route path="/terms" element={<DynamicPage defaultSlug="terms" />} />
+                  <Route path="/privacy" element={<DynamicPage defaultSlug="privacy" />} />
+                  <Route path="/shipping" element={<DynamicPage defaultSlug="shipping" />} />
+                  <Route path="/faq" element={<DynamicPage defaultSlug="faq" />} />
                   <Route path="/page/:slug" element={<DynamicPage />} />
                   <Route path="*" element={<NotFound />} />
                 </Routes>

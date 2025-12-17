@@ -18,7 +18,7 @@ router.get('/', async (req, res) => {
 
     const pages = await Page.findAll({
       where,
-      attributes: ['id', 'title', 'slug', 'excerpt', 'status', 'publishedAt', 'metaTitle', 'metaDescription', 'createdAt'],
+      attributes: ['id', 'title', 'slug', 'excerpt', 'status', 'publishedAt', 'metaTitle', 'metaDescription', 'images', 'createdAt'],
       order: [['createdAt', 'DESC']]
     });
 
@@ -35,7 +35,7 @@ router.get('/:slug', async (req, res) => {
     const { slug } = req.params;
     
     const page = await Page.findOne({
-      where: { 
+      where: {
         slug,
         status: 'published'
       }
