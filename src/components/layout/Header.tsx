@@ -1,10 +1,12 @@
 import { useState, useEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { Menu, X, ShoppingCart, Search, ChevronDown } from 'lucide-react';
+import { useQuery } from '@tanstack/react-query';
+import { Menu, X, ShoppingCart, Search, ChevronDown, Loader2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useCartStore } from '@/store/cart';
 import { cn } from '@/lib/utils';
 import { SearchDialog } from '@/components/search/SearchDialog';
+import { getCategories } from '@/api/products';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -12,13 +14,14 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 
-const categories = [
-  { path: '/hoodies', label: 'هودی و سویشرت', icon: '🧥' },
-  { path: '/tshirts', label: 'تیشرت', icon: '👕' },
-  { path: '/pants', label: 'شلوار', icon: '👖' },
-  { path: '/jeans', label: 'شلوار جین', icon: '👖' },
-  { path: '/shoes', label: 'کفش', icon: '👟' },
-  { path: '/accessories', label: 'اکسسوری', icon: '🎒' },
+// Fallback categories in case API fails
+const fallbackCategories = [
+  { slug: 'hoodie', name: 'هودی و سویشرت', icon: '🧥' },
+  { slug: 'tshirt', name: 'تیشرت', icon: '👕' },
+  { slug: 'pants', name: 'شلوار', icon: '👖' },
+  { slug: 'jeans', name: 'شلوار جین', icon: '👖' },
+  { slug: 'shoes', name: 'کفش', icon: '👟' },
+  { slug: 'accessories', name: 'اکسسوری', icon: '🎒' },
 ];
 
 export const Header = () => {
@@ -27,6 +30,16 @@ export const Header = () => {
   const [searchOpen, setSearchOpen] = useState(false);
   const { totalItems } = useCartStore();
   const location = useLocation();
+
+  // Fetch categories from API
+  const { data: apiCategories = [], isLoading: categoriesLoading } = useQuery({
+    queryKey: ['categories'],
+    queryFn: getCategories,
+    staleTime: 1000 * 60 * 5, // Cache for 5 minutes
+  });
+
+  // Use API categories or fallback
+  const categories = apiCategories.length > 0 ? apiCategories : fallbackCategories;
 
   useEffect(() => {
     const handleScroll = () => {
@@ -37,6 +50,7 @@ export const Header = () => {
   }, []);
 
   const isActive = (path: string) => location.pathname === path;
+  const isCategoryActive = (slug: string) => location.pathname === `/category/${slug}`;
 
   const mainNavLinks = [
     { path: '/', label: 'خانه' },
@@ -96,39 +110,43 @@ export const Header = () => {
                 </Link>
               ))}
 
-              {/* Categories Dropdown */}
+              {/* Categories Dropdown - Dynamic from API */}
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
                   <button
                     className={cn(
                       "px-5 py-2.5 rounded-xl font-medium transition-all duration-300 flex items-center gap-2",
-                      categories.some(c => isActive(c.path))
+                      categories.some(c => isCategoryActive(c.slug))
                         ? "text-primary"
                         : "text-foreground/70 hover:text-foreground"
                     )}
                   >
                     دسته‌بندی‌ها
-                    <ChevronDown className="h-4 w-4 transition-transform duration-300 group-data-[state=open]:rotate-180" />
+                    {categoriesLoading ? (
+                      <Loader2 className="h-4 w-4 animate-spin" />
+                    ) : (
+                      <ChevronDown className="h-4 w-4 transition-transform duration-300 group-data-[state=open]:rotate-180" />
+                    )}
                   </button>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent align="start" className="w-56 p-2 glass-strong border-border/30 rounded-2xl">
                   {categories.map((category) => (
                     <DropdownMenuItem
-                      key={category.path}
+                      key={category.slug}
                       asChild
                       className="group rounded-xl focus:bg-primary/10 hover:bg-primary/5 transition-colors duration-200"
                     >
                       <Link
-                        to={category.path}
+                        to={`/category/${category.slug}`}
                         className={cn(
                           "flex items-center gap-3 cursor-pointer py-3 px-4 text-foreground/80 group-hover:text-primary transition-colors duration-200",
-                          isActive(category.path) && "text-primary"
+                          isCategoryActive(category.slug) && "text-primary"
                         )}
                       >
                         <span className="text-lg group-hover:scale-110 transition-transform duration-200">
-                          {category.icon}
+                          {category.icon || '📦'}
                         </span>
-                        <span className="font-medium">{category.label}</span>
+                        <span className="font-medium">{category.name}</span>
                       </Link>
                     </DropdownMenuItem>
                   ))}
@@ -233,18 +251,18 @@ export const Header = () => {
                 <div className="grid grid-cols-2 gap-2 px-2">
                   {categories.map((category) => (
                     <Link
-                      key={category.path}
-                      to={category.path}
+                      key={category.slug}
+                      to={`/category/${category.slug}`}
                       className={cn(
                         "px-4 py-3 rounded-xl font-medium transition-all duration-300 flex items-center gap-3",
-                        isActive(category.path)
+                        isCategoryActive(category.slug)
                           ? "text-primary bg-primary/10"
                           : "text-foreground/70 hover:text-primary hover:bg-primary/5"
                       )}
                       onClick={() => setMobileMenuOpen(false)}
                     >
-                      <span>{category.icon}</span>
-                      <span className="text-sm">{category.label}</span>
+                      <span>{category.icon || '📦'}</span>
+                      <span className="text-sm">{category.name}</span>
                     </Link>
                   ))}
                 </div>
