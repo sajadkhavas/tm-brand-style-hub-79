@@ -62,6 +62,7 @@ interface BackendCategory {
   slug: string;
   description?: string;
   image?: string;
+  icon?: string;
   isActive: boolean;
   order: number;
 }
@@ -98,11 +99,12 @@ const transformProduct = (item: BackendProduct): Product => ({
 /**
  * Transform backend category to frontend Category type
  */
-const transformCategory = (item: BackendCategory): Category => ({
+const transformCategory = (item: BackendCategory): Category & { icon?: string } => ({
   id: item.id,
   slug: item.slug,
   name: item.name,
   description: item.description,
+  icon: item.icon,
 });
 
 /**

@@ -3,13 +3,20 @@ const { Category, Product } = require('../models');
 
 const router = express.Router();
 
-// Get all categories
+// Get all categories (with optional includeInactive param)
 router.get('/', async (req, res) => {
   try {
+    const { includeInactive } = req.query;
+    
+    const where = {};
+    if (!includeInactive) {
+      where.isActive = true;
+    }
+
     const categories = await Category.findAll({
-      where: { isActive: true },
+      where,
       order: [['order', 'ASC'], ['name', 'ASC']],
-      attributes: ['id', 'name', 'nameEn', 'slug', 'description', 'image']
+      attributes: ['id', 'name', 'nameEn', 'slug', 'description', 'image', 'icon', 'isActive', 'order']
     });
 
     res.json({ data: categories });
@@ -24,6 +31,7 @@ router.get('/:slug', async (req, res) => {
   try {
     const category = await Category.findOne({
       where: { slug: req.params.slug, isActive: true },
+      attributes: ['id', 'name', 'nameEn', 'slug', 'description', 'image', 'icon'],
       include: [{
         model: Product,
         as: 'products',
