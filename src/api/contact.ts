@@ -1,5 +1,6 @@
 /**
  * Contact API - Send contact form to backend
+ * Note: Paths do NOT include /api prefix as VITE_API_URL already includes it
  */
 import { apiClient } from './client';
 
@@ -16,7 +17,8 @@ export interface ContactFormData {
  */
 export const submitContactForm = async (data: ContactFormData): Promise<boolean> => {
   try {
-    await apiClient.post('/api/contact', data);
+    // Note: NO /api prefix - VITE_API_URL already includes it
+    await apiClient.post('/contact', data);
     return true;
   } catch (error) {
     console.error('Failed to submit contact form:', error);

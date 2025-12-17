@@ -1,5 +1,6 @@
 /**
  * Blog API - Fetches from Node.js backend managed via AdminJS
+ * Note: Paths do NOT include /api prefix as VITE_API_URL already includes it
  */
 import { BlogPost } from '@/types';
 import { apiClient, ApiResponse } from './client';
@@ -72,7 +73,8 @@ const transformBlogPost = (item: BackendBlogPost): BlogPost => {
  */
 export const getBlogPosts = async (): Promise<BlogPost[]> => {
   try {
-    const response = await apiClient.get<ApiResponse<BackendBlogPost[]>>('/api/blog');
+    // Note: NO /api prefix - VITE_API_URL already includes it
+    const response = await apiClient.get<ApiResponse<BackendBlogPost[]>>('/blog');
     return (response.data || []).map(transformBlogPost);
   } catch (error) {
     console.error('Failed to fetch blog posts:', error);
@@ -85,7 +87,7 @@ export const getBlogPosts = async (): Promise<BlogPost[]> => {
  */
 export const getBlogPostBySlug = async (slug: string): Promise<BlogPost | undefined> => {
   try {
-    const response = await apiClient.get<ApiResponse<BackendBlogPost>>(`/api/blog/${slug}`);
+    const response = await apiClient.get<ApiResponse<BackendBlogPost>>(`/blog/${slug}`);
     return response.data ? transformBlogPost(response.data) : undefined;
   } catch (error) {
     console.error(`Failed to fetch blog post ${slug}:`, error);
