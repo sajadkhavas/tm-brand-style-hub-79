@@ -4,7 +4,7 @@
  * All static pages (about, contact, terms, privacy, shipping, faq) 
  * are fetched dynamically from the backend API
  */
-import { useParams, Link } from 'react-router-dom';
+import { useParams, Link, useLocation } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import { Helmet } from 'react-helmet-async';
 import { getPageBySlug } from '@/api/pages';
