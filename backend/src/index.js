@@ -4,7 +4,7 @@ const cors = require('cors');
 const path = require('path');
 const morgan = require('morgan');
 const { sequelize } = require('./database/connection');
-const { Page } = require('./models');
+const { Page, Menu, Setting } = require('./models');
 const setupAdmin = require('./admin');
 
 // Import Routes
@@ -16,23 +16,36 @@ const orderRoutes = require('./routes/orders');
 const uploadRoutes = require('./routes/upload');
 const pageRoutes = require('./routes/pages');
 const contactRoutes = require('./routes/contact');
+const menuRoutes = require('./routes/menu');
+const fileRoutes = require('./routes/files');
+const settingsRoutes = require('./routes/settings');
 
 const app = express();
 const PORT = process.env.PORT || 3001;
 app.set('trust proxy', 1);
 
-// CORS Configuration - Allow all origins for development, specific origins for production
+// CORS Configuration
 const corsOptions = {
-  origin: [
-    process.env.FRONTEND_URL || 'http://localhost:5173',
-    process.env.PRODUCTION_FRONTEND_URL || 'https://tm-brand.com',
-    'http://tm-brand.com',
-    'https://tm-brand.com',
-    'http://www.tm-brand.com',
-    'https://www.tm-brand.com',
-    'http://45.149.78.122',
-    'http://localhost:8080'
-  ],
+  origin: (origin, callback) => {
+    const allowedOrigins = [
+      process.env.FRONTEND_URL || 'http://localhost:5173',
+      'https://shine-web.co',
+      'http://shine-web.co',
+      'https://www.shine-web.co',
+      'http://45.149.78.122',
+      'http://localhost:8080'
+    ];
+    
+    // Allow Lovable preview domains
+    if (!origin || 
+        allowedOrigins.includes(origin) || 
+        origin.endsWith('.lovable.app') || 
+        origin.endsWith('.lovableproject.com')) {
+      callback(null, true);
+    } else {
+      callback(null, true); // Allow all in development
+    }
+  },
   credentials: true,
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
   allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With']
@@ -46,109 +59,49 @@ app.use(morgan('combined'));
 const uploadsPath = path.resolve(process.env.FILE_UPLOAD_PATH || path.join(__dirname, '../uploads'));
 app.use('/uploads', express.static(uploadsPath));
 
-async function seedDefaultPages() {
-  const defaults = [
-    {
-      slug: 'about-us',
-      title: 'درباره TM-BRAND',
-      excerpt: 'برند پرمیوم استریت‌ویر و اسپرت برای نسل مدرن ایران',
-      content:
-        '<h2>درباره ما</h2><p>TM-BRAND برند استریت‌ویر و اسپرت ایرانی است که با الهام از سبک زندگی پویا، محصولات پرمیوم و باکیفیت ارائه می‌دهد.</p>',
-      metaTitle: 'درباره TM-BRAND',
-      metaDescription: 'آشنایی با برند استریت‌ویر TM-BRAND و مأموریت ما برای ارائه کیفیت پرمیوم.'
-    },
-    {
-      slug: 'contact-us',
-      title: 'تماس با TM-BRAND',
-      excerpt: 'از طریق فرم تماس با ما در ارتباط باشید',
-      content:
-        JSON.stringify({
-          hero: {
-            subtitle: 'همیشه آماده شنیدن نظرات و پیشنهادات شما هستیم',
-          },
-          contactMethods: [
-            { label: 'ایمیل', value: 'support@tm-brand.com', icon: 'mail' },
-            { label: 'تلفن', value: '021-00000000', icon: 'phone' }
-          ],
-          faqs: [
-            { question: 'زمان پاسخگویی چگونه است؟', answer: 'در روزهای کاری بین ۲۴ تا ۴۸ ساعت پاسخ می‌دهیم.' }
-          ],
-          html:
-            '<p>برای هرگونه سؤال یا همکاری، فرم را تکمیل کنید یا از روش‌های زیر با ما در تماس باشید.</p>'
-        }),
-      metaTitle: 'تماس با TM-BRAND',
-      metaDescription: 'راه‌های ارتباطی با TM-BRAND و ارسال پیام از طریق فرم تماس.'
-    },
-    {
-      slug: 'terms',
-      title: 'قوانین و مقررات',
-      excerpt: 'شرایط استفاده از خدمات و خرید در TM-BRAND',
-      content:
-        '<h2>قوانین سایت</h2><p>استفاده از خدمات TM-BRAND به معنای پذیرش شرایط و قوانین خرید و مرجوعی است.</p>',
-      metaTitle: 'قوانین و مقررات TM-BRAND',
-      metaDescription: 'قوانین استفاده و خرید از TM-BRAND را مطالعه کنید.'
-    },
-    {
-      slug: 'privacy',
-      title: 'سیاست حفظ حریم خصوصی',
-      excerpt: 'چگونگی جمع‌آوری و استفاده از داده‌های کاربران',
-      content:
-        '<h2>حریم خصوصی</h2><p>ما از اطلاعات شما برای بهبود تجربه خرید استفاده می‌کنیم و آن را ایمن نگه می‌داریم.</p>',
-      metaTitle: 'حریم خصوصی TM-BRAND',
-      metaDescription: 'اطلاعات شما در TM-BRAND چگونه حفاظت می‌شود.'
-    },
-    {
-      slug: 'shipping',
-      title: 'ارسال و تحویل',
-      excerpt: 'شرایط ارسال سفارش‌ها در TM-BRAND',
-      content:
-        '<h2>سیاست ارسال</h2><p>ارسال سفارش‌ها در سریع‌ترین زمان ممکن انجام می‌شود و کد رهگیری در اختیار شما قرار می‌گیرد.</p>',
-      metaTitle: 'ارسال سفارش TM-BRAND',
-      metaDescription: 'جزئیات ارسال و تحویل سفارش در TM-BRAND.'
-    },
-    {
-      slug: 'faq',
-      title: 'سؤالات متداول',
-      excerpt: 'پاسخ به پرسش‌های رایج مشتریان TM-BRAND',
-      content:
-        '<h2>سؤالات متداول</h2><p>پاسخ کوتاه به پرسش‌های عمومی مشتریان درباره سفارش، ارسال و پشتیبانی.</p>',
-      metaTitle: 'سؤالات متداول TM-BRAND',
-      metaDescription: 'پرسش و پاسخ درباره خرید از TM-BRAND.'
-    }
+// Seed default data
+async function seedDefaults() {
+  // Default pages
+  const defaultPages = [
+    { slug: 'about-us', title: 'درباره ما', content: '<h2>درباره ما</h2><p>محتوای صفحه درباره ما</p>', status: 'published' },
+    { slug: 'contact-us', title: 'تماس با ما', content: '<h2>تماس با ما</h2><p>اطلاعات تماس</p>', status: 'published' },
+    { slug: 'terms', title: 'قوانین و مقررات', content: '<h2>قوانین</h2>', status: 'published' },
+    { slug: 'privacy', title: 'حریم خصوصی', content: '<h2>حریم خصوصی</h2>', status: 'published' },
+    { slug: 'faq', title: 'سوالات متداول', content: '<h2>سوالات متداول</h2>', status: 'published' },
   ];
 
-  for (const page of defaults) {
-    await Page.findOrCreate({
-      where: { slug: page.slug },
-      defaults: {
-        ...page,
-        status: 'published',
-        publishedAt: new Date()
-      }
-    });
+  for (const page of defaultPages) {
+    await Page.findOrCreate({ where: { slug: page.slug }, defaults: { ...page, publishedAt: new Date() } });
+  }
+
+  // Default menu items
+  const defaultMenus = [
+    { title: 'خانه', url: '/', order: 1, location: 'header', isActive: true },
+    { title: 'فروشگاه', url: '/shop', order: 2, location: 'header', isActive: true },
+    { title: 'درباره ما', url: '/about', order: 3, location: 'header', isActive: true },
+    { title: 'وبلاگ', url: '/blog', order: 4, location: 'header', isActive: true },
+    { title: 'تماس با ما', url: '/contact', order: 5, location: 'header', isActive: true },
+  ];
+
+  for (const menu of defaultMenus) {
+    await Menu.findOrCreate({ where: { url: menu.url, location: menu.location }, defaults: menu });
   }
 }
 
 // Initialize database and start server
 async function startServer() {
   try {
-    // Test database connection
     await sequelize.authenticate();
     console.log('✅ Database connected successfully');
 
-    // Sync models (in development)
     if (process.env.NODE_ENV === 'development') {
       await sequelize.sync({ alter: true });
       console.log('✅ Database models synced');
     }
 
-    // Setup AdminJS first
     await setupAdmin(app);
+    await seedDefaults();
 
-    // Seed default CMS pages for first-time deployments
-    await seedDefaultPages();
-
-    // Body parsers must be registered after AdminJS to avoid router conflicts
     app.use(express.json({ limit: '10mb' }));
     app.use(express.urlencoded({ extended: true, limit: '10mb' }));
 
@@ -161,26 +114,22 @@ async function startServer() {
     app.use('/api/upload', uploadRoutes);
     app.use('/api/pages', pageRoutes);
     app.use('/api/contact', contactRoutes);
+    app.use('/api/menu', menuRoutes);
+    app.use('/api/files', fileRoutes);
+    app.use('/api/settings', settingsRoutes);
 
-    // Health Check
     app.get('/api/health', (req, res) => {
       res.json({ status: 'ok', timestamp: new Date().toISOString() });
     });
 
-    // Error handling middleware
     app.use((err, req, res, next) => {
       console.error('Error:', err);
-      res.status(err.status || 500).json({
-        error: {
-          message: err.message || 'Internal Server Error',
-          status: err.status || 500
-        }
-      });
+      res.status(err.status || 500).json({ error: { message: err.message || 'Internal Server Error' } });
     });
 
     app.listen(PORT, () => {
       console.log(`🚀 Server running on http://localhost:${PORT}`);
-      console.log(`📊 Admin panel: http://localhost:${PORT}/admin`);
+      console.log(`📊 Admin panel: http://localhost:${PORT}/admin (shine-web.co)`);
     });
   } catch (error) {
     console.error('❌ Unable to start server:', error);
