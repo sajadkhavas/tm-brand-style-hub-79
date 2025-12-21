@@ -66,6 +66,10 @@ const Category = sequelize.define('Category', {
     type: DataTypes.STRING,
     allowNull: true
   },
+  icon: {
+    type: DataTypes.STRING,
+    allowNull: true
+  },
   isActive: {
     type: DataTypes.BOOLEAN,
     defaultValue: true
@@ -385,7 +389,6 @@ const Page = sequelize.define('Page', {
   tableName: 'pages',
   hooks: {
     beforeValidate: (page) => {
-      // Auto-generate slug from title if not provided
       if (!page.slug && page.title) {
         page.slug = page.title
           .toLowerCase()
@@ -394,12 +397,145 @@ const Page = sequelize.define('Page', {
           .replace(/-+/g, '-')
           .trim();
       }
-      // Set publishedAt when status changes to published
       if (page.status === 'published' && !page.publishedAt) {
         page.publishedAt = new Date();
       }
     }
   }
+});
+
+// ==================== MENU MODEL (NEW) ====================
+const Menu = sequelize.define('Menu', {
+  id: {
+    type: DataTypes.UUID,
+    defaultValue: DataTypes.UUIDV4,
+    primaryKey: true
+  },
+  title: {
+    type: DataTypes.STRING,
+    allowNull: false
+  },
+  titleEn: {
+    type: DataTypes.STRING,
+    allowNull: true
+  },
+  url: {
+    type: DataTypes.STRING,
+    allowNull: false
+  },
+  type: {
+    type: DataTypes.ENUM('link', 'page', 'category', 'product'),
+    defaultValue: 'link'
+  },
+  target: {
+    type: DataTypes.ENUM('_self', '_blank'),
+    defaultValue: '_self'
+  },
+  icon: {
+    type: DataTypes.STRING,
+    allowNull: true
+  },
+  parentId: {
+    type: DataTypes.UUID,
+    allowNull: true
+  },
+  order: {
+    type: DataTypes.INTEGER,
+    defaultValue: 0
+  },
+  isActive: {
+    type: DataTypes.BOOLEAN,
+    defaultValue: true
+  },
+  location: {
+    type: DataTypes.ENUM('header', 'footer', 'both'),
+    defaultValue: 'header'
+  }
+}, {
+  tableName: 'menus'
+});
+
+// ==================== FILE MODEL (NEW - File Manager) ====================
+const File = sequelize.define('File', {
+  id: {
+    type: DataTypes.UUID,
+    defaultValue: DataTypes.UUIDV4,
+    primaryKey: true
+  },
+  name: {
+    type: DataTypes.STRING,
+    allowNull: false
+  },
+  originalName: {
+    type: DataTypes.STRING,
+    allowNull: false
+  },
+  path: {
+    type: DataTypes.STRING,
+    allowNull: false
+  },
+  url: {
+    type: DataTypes.STRING,
+    allowNull: false
+  },
+  mimeType: {
+    type: DataTypes.STRING,
+    allowNull: false
+  },
+  size: {
+    type: DataTypes.INTEGER,
+    allowNull: false
+  },
+  folder: {
+    type: DataTypes.STRING,
+    defaultValue: 'general'
+  },
+  alt: {
+    type: DataTypes.STRING,
+    allowNull: true
+  },
+  description: {
+    type: DataTypes.TEXT,
+    allowNull: true
+  }
+}, {
+  tableName: 'files'
+});
+
+// ==================== SETTINGS MODEL (NEW - Site Settings) ====================
+const Setting = sequelize.define('Setting', {
+  id: {
+    type: DataTypes.UUID,
+    defaultValue: DataTypes.UUIDV4,
+    primaryKey: true
+  },
+  key: {
+    type: DataTypes.STRING,
+    unique: true,
+    allowNull: false
+  },
+  value: {
+    type: DataTypes.TEXT,
+    allowNull: true
+  },
+  type: {
+    type: DataTypes.ENUM('text', 'textarea', 'number', 'boolean', 'image', 'json'),
+    defaultValue: 'text'
+  },
+  group: {
+    type: DataTypes.STRING,
+    defaultValue: 'general'
+  },
+  label: {
+    type: DataTypes.STRING,
+    allowNull: true
+  },
+  description: {
+    type: DataTypes.STRING,
+    allowNull: true
+  }
+}, {
+  tableName: 'settings'
 });
 
 // ==================== RELATIONSHIPS ====================
@@ -420,6 +556,14 @@ User.hasMany(Order, { foreignKey: 'userId', as: 'orders' });
 Address.belongsTo(User, { foreignKey: 'userId', as: 'user' });
 User.hasMany(Address, { foreignKey: 'userId', as: 'addresses' });
 
+// Menu self-reference for nested menus
+Menu.belongsTo(Menu, { foreignKey: 'parentId', as: 'parent' });
+Menu.hasMany(Menu, { foreignKey: 'parentId', as: 'children' });
+
+// File belongs to User (uploader)
+File.belongsTo(User, { foreignKey: 'uploadedBy', as: 'uploader' });
+User.hasMany(File, { foreignKey: 'uploadedBy', as: 'files' });
+
 module.exports = {
   sequelize,
   User,
@@ -428,5 +572,8 @@ module.exports = {
   BlogPost,
   Order,
   Address,
-  Page
+  Page,
+  Menu,
+  File,
+  Setting
 };
